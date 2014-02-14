@@ -1,0 +1,16 @@
+-- Let's define our processing function
+function sortLines ()
+local e = window.edit -- Store edition area in a local variable for shorter access
+if e.selectionStart==e.selectionEnd then -- check if there is no current selection 
+e:select() -- select the entire area
+end--if
+local lines  = {} -- the table where we will store our lines
+for line in e.selectedText:gmatch('[^\r\n]+') do -- exatract the lines and fill our table
+table.insert(lines, line)
+end--for
+table.sort(lines) -- sort our lines
+local text = table.concat(lines, '\r\n') -- Rebuild the lines from the table
+e.selectedText = text -- and replace current selection with selected contents
+end
+
+window.menubar.tools:add('Sort alphabetically', 'Ctrl+Shift+T', sortLines) -- Add our function in the tools menu

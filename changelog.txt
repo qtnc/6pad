@@ -1,0 +1,189 @@
+6pad changelog
+
+Version 0.1 beta 1, 18.08.2010
+First release
+
+Version 0.1 beta 2, 24.08.2010
+- Added and/or changed: many lua API functions, see documentation
+Changed : the OK button of search dialog is now labelled "search" and the one of search/replace "replace all".
+Added: lua pattern search and replace
+- Added : status bar showing current row and column
+- Added : drop down list of last search strings and last replace strings in the search and search/replace dialogs
+- Added : one can now open a file which doesn't exists at starting. The file will be actually written on first save.
+- Added : new encodings : iso-8859-15/latin9, unicode with BOM, unicode big-endian with or without BOM, IBM EBCDIC, old macintosh latin-1
+Fixed : encoding autodetection improvement. Work now quite well with the most used encodings : ANSI/CP1252, UTF-8 with or without BOM and unicode variants
+- Fixed : auto line wrap now works correctly. 
+- Fixed : the title bars of the search and search/replace dialogs were hidden
+- Fixed : it was somewhat impossible to open a file from the windows explorer
+- Fixed : the main window can now handle resizing correctly
+
+Version 0.1 beta 3, 29.08.2010
+- Added : if a text is selected when doing a search/replace, then the replacement is only made in the selection. If nothing is selected, then the replacement is made in the hole text as before.
+- Added : show/hide status bar option
+- Added : lua extension : listing directory contents via io.files iterator
+- Added : lua  functions: executeInBackground, opendialog, savedialog
+Fixed : answering cancel to the save change before closing dialog closed the application anyway
+
+Version 0.1 beta 4, 01.10.2010
+Added : perl compatible regular expression search and replace, using PCRE library v7.0 from GNUWin32, in place of lua limited pattern search/replace.
+Added : lua API to PCRE: functions preg_find and preg_replace
+Added: lua event: onupdown, to catch up/down arrow press in the edition area
+Added: lua functions: new playSound function, 4th argument of prompt function to provide a preset list
+Fixed : one can now edit text longer than 32KB. The new limit is now 16MB.   (MSDN sick)
+
+Version 0.1 beta 5, 05.10.2010
+Changeed: lua events: changed event names and semantic of onbeforeopen, onbeforesave, onafteropen (was onopen), onaftersave (was onsave)
+Added: lua event: onbeforeopen
+Added: pressing tab or shift+tab when there is a selection now increase or decrease indentation of selected text
+Fixed: segfault when doing search/replace on empty contents or on empty regular expression
+
+Version 0.1 beta 6, 23.10.2010
+Changed: name changed to 6pad, because the old name was already used by another program
+Added : undo/redo commands in edit menu, CTrl+Z / Ctrl+Shift+Z, up to 15 undo levels
+Added: double cursor feature: switch cursor (F4), join cursors (Shift+F4), select to second cursor (Ctrl+Shift+A)
+Added : recent files submenu under file, 7 most recent files saved
+Added : lua: registerHandler function for edit and choice handles, only one event at the moment (onclose)
+Added: lua: functions isEnabled, isChecked and isBuiltIn for menu handles
+
+Version 0.1 beta 7, 19.11.2010
+Changed: completely refactored lua API, which is now much simpler to use. Most methos have been replaced by property table access, which are more natural for scripters. See API functions.txt for more details.
+Added: configuration and saved options via an ini file (6pad.ini)
+Added: choice between tabs or spaces in indentation, via ini option tabSpaces (0=use tabs, >0=use specified number of spaces
+Added: fixed-width font in main edition area, default to Courier new 12 points, customizable via ini options fontFace and fontSize
+Added: open in a new instance command in file menu
+Added: percentage of document in status bar
+Fixed: the status bar is now no more systematicly announced with jaws whenever a key is pressed in the main edition area, thank to WM_GETTEXT label subclass and hack
+Fixed: accelerator and label are now consist and correctly aligned for script-generated menu items
+Fixed: add undo step before doing a replace operation
+Fixed: width of tab character fixed to correct size, default to 4 if indentation is in tab mode
+Fixed: segfault when a regular expression replacement string contained more than one "$n" captured subpattern references
+Fixed: $ escaping on regular expressions replacement strings didn't work
+
+Version 0.1 beta 8, 26.11.2010
+Added: selection report in status bar when there is a selection
+Added: confirmation before reloading unsaved file, when via file>reload or file>reload with selected encoding
+Added: last chance save on application crash
+Added: relative line move feature, by entering +n or -n in go to line dialog. ex: +30 goes 30 lines down, -30 goes 30 lines up.
+Removed: F5 shortcut to reload has been removed. That shortcut is not so useful and can be confusing with F4.
+Fixed: status bar was not refreshed after a find, an undo/redo, a go to line, or a cursor switch
+Fixed: document percentage in status bar was in fact absent in english version
+
+Version 0.1 beta 9, 24.12.2010
+Changed: last chance save on application crash, simpler and more secure
+Changed: tabSpaces 6pad.ini parameter renamed to defaultTabSpaces
+Added: ability to change dynamicaly indentation mode between spaces and tabs
+Added: lua: added window.encoding, window.lineEnding, window.indentString and window.tabSpaces properties
+Fixed: find, replace and go to line didn't move cursor at right place in files greater than 32KB
+Fixed: smart home gave incorrect results on certain situations
+Fixed: PCRE buffer overflow bug: some unexpected random characters were sometimes added in a regular expression replacement
+
+Version 0.1 beta 10, 26.01.2011
+Added: Alt+Home to go to the actual beginning of the line, useful when smart home is enabled
+Added: lua process API, to handle true bidirectional multiplex process pipes, because io.popen can't opean in r and w mode in the same time.
+Fixed: 6pad.ini can now be edited in 6pad itself without being overwritten on close
+Fixed: stupid segmentation fault when accessing properties of an edit handle in lua
+
+Version 1.0 RC, 19.03.2011
+No more bug found, status passed to RC
+
+Version 1.0 RC2, 02.04.2011
+Updated from luajit 2.0.0 beta 4 to beta 6, featuring new FFI library
+
+Version 1.0.1, 02.05.2011
+Added: automatic detection of indentation mode between spaces and tabs when loading a file
+Added: onKeyPress lua event for edithandle.
+Added: lua functions edithandle.lineOFOffset and edithandle.offsetOfLinn
+Added: lua progress handle functions
+Removed: lua API to directories and serialization. These are not strictly necessary. Made this to shrink size of executable. More powerful official libraries exists as replacements if needed.
+
+Version 1.1, 14.05.2011
+Added: management of multiple tabs
+ADded: Adaptations to lua API to reflect the fact that multiple files can be opened in different tabs
+* Events onKeyPress, onEnter and onCaretMove are independant by tab, while other window events are globals
+* Event onBeforeClose is called before closing each tab
+* new functions: openTab, closeTab, showTab
+* new events: onBeforeTabChange, onAfterTabChange
+Added: new tools menu
+Added: lua console
+Changed: shortcut to switch between modless windows is now F6 instead of Ctrl+Tab, because Ctrl+Tab is now used to switch between tabs
+Changed: lua event onUpDown is replaced by a more powerful onCaretMove event, see documentation
+
+Version 1.2, 15.10.2011
+Added: search direction in find dialog
+Added: lua API: new functions to manage timers and delayed execution of functions: setTimeout, setInterval, clearTimeout and clearInterval
+Added: lua API: global events globalOnKeyPress, globalOnCaretMove and globalOnEnter. Page-specific events onKeyPress, onEnter and onCaretMove take precedence over global events if set.
+Added: lua API: preg_replace: extra preg_replace arguments are now passed to the replacement function. One can now also pass a table as replacement with same behavior as string.gmatch
+Added: lua API: added string.strchr and string.strrchr, with same behavior as corresponding standard C functions
+Added: lua API: added some system functions: sendMessage, shellExec, +redirected os.execute to shellExec since standard os.execute pop-up a DOS window and therefore is useless as such
+Added: lua API: reincluded useful external API: files and process management
+Changed: lua API: renamed functions to be more coherent with lua naming: preg_search=pfind, preg_rsearch=prfind, preg_match=pmatch, preg_replace=pgsub, strchr=cfind, strrchr=crfind. Added pgmatch similar to standard gmatch.
+Changed: startup.lua is no longer loaded by default; scripts to load at startup must now be specified in 6pad.ini with the key "extension", i.e. extension=aplugin. Scripts are loaded using require lua function. Don't specify the .lua, .lc or .dll file extension.
+Changed: indentation auto-detection browse now up to 16KB instead of 4KB to find an indented line and deduce indentation mode
+Fixed: it was possible to open twice the same file in different application instances by using Ctrl+O
+Updated: updated from luajit 2.0.0.6 to 2.0.0.8, featuring new FFI functions, bytecode compilation, and many bugfixes
+
+Version 1.2.1, 08.01.2012
+Added: file menu appears when clicking with the right mouse button on a tab
+Added: close a tab by clicking on it with the middle mouse button
+Added: lua API: io.realpath in file & directory API
+Changed: lua API: string.cfind and string.crfind return nil instead of 0 when given character is not found
+Fixed: read/write error when loading/saving an empty file
+Fixed: keyboard bug with right alt / altGr that sometimes virtually maintained ctrl down even after releasing that key
+Fixed: negative position percentage in huge files greater than 10 MB
+Fixed: when switching between tabs, garbage was sometimes saved to a file instead of its real contents
+Updated: updated from luajit 2.0.0.8 to 2.0.0.9
+
+Version 1.2.2, 24.01.2012
+Added: new quick edition shortcuts
+* If there is no selection when pressing Ctrl+C, the entire line is copied
+* If there is no selection when pressing Ctrl+X, the entire line is cut
+Added: mouse wheel support
+Added: lua API: addAccelerator and removeAccelerator functions
+
+Version 1.3, 30.01.2012
+Changed: completely refactored lua window and edition events, now much more consist
+Changed: removed deprecated or problematic lua functions: sendMessage, showTab, closeTab. Renamed openTab to openDocument.
+
+Version 1.3.1, 01.05.2012
+Changed: order of lua API functions setInterval and setTimeout reversed, to be consist with javascript and jaws script
+Fixed: trying to close the last tab with Ctrl+F4 or File>Close sometimes crashed the application
+Fixed: bug undo buffer: crash when pressing 16+ times enter, then closing the tab and say no when asked to save
+Fixed: crash when accessing window.tabs[n] when n~=0
+
+Version 1.4, 12.07.2012
+Added: single instance option, new ini entry singleInstance. If activated, only one instance of 6pad will be opened at the same time; single instance also means single window.
+Added: new ini entries: searchCaseless, seachRegex, searchUP, that save the statte of these options in the search/replace dialog
+Added: file & directory API: new functions os.filemtime, os.fileatime, os.filectime, os.symlink, os.appdir, added parameter in os.copy, os.glob iterator now returns 4 parameters
+Added: lua general functions: chooseFolder, added file name filters for saveDialog and openDialog
+Added: access to command line arguments from lua via os.argv
+Added: lua event onLineChange
+Added: menus can now be referenced by name, e.g. window.menubar.file
+Added: tabs can also be referenced by name, using their name or their filename, e.g. window.tabs['foo.txt']
+Added: context menus support via  menuhandle.createPopupMenu and show functions.
+Added: filenameFilter and filenameFilterIndex for default open/save dialog boxes
+Changed: API functions.txt replaced by a more comprehensive and complete CHM documentation
+Changed: internal window class name, configuration ini file and window title are now derived from executable filename
+Changed: PCRE API refactored; more complete, more options, named subpatterns support
+Changed: file & directory lua extension functions moved from io table to os table; more logical design
+Changed: progress API no longer automatically loaded; use require. 
+Changed. Choice and menu API loading deferred until used; no need to use require for those
+Changed: os.execute now more coherent with standard version of the function, synchrone and returns again error code
+Changed: tab.filename and tab.name are no longer read only properties
+Fixed: PCRE search/replace: incorrect result when having two consecutive occurences in certain circunstances (ex: replace a by b in aaaa gave baba unstead of bbbb in some border cases); limiting to maximum 65535 replacements to prevent from infinite loop expressions such as a*?
+Fixed: adding a menu item with a nil accelerator sometimes crashed or mixed up other menus
+Fixed: spaces now allowed in accelerator specification
+Fixed: tab.focus did not change pages correctly
+Updated: updated from luajit 2.0.0.9 to 2.0.0.10
+
+Version 1.4.1, 22.10.2012
+Removed: critical error / segmentation fault song
+Fixed defect: critical logic error in regular expression search/replace. Known remaing issue: problem with expressions that always result in empty matches such as "^" or "$" used alone. Replace "^" with "^(?<=\n|\A)" and "$" with "$(?=\r|\Z)"
+Fixed: tab/shift+tab to indent/deindent multiple lines at once was broken
+Fixed: it wasn't possible to use Ctrl+Enter, Shift+Enter or Alt+Enter as a shortcut for any command
+
+Version 1.4.2, 09.06.2013
+Added: added UTF-8 and UCP support in PCRE regular expression; not automatically activated, use option u to active it in a match
+Added: unicode checkbox in S&&R dialog to use the new unicode/UTF-8/UCP options; not checked by default because much slower when enabled
+Added: extensions to lua standard string API, with encoding guessing and conversions
+Changed: S&R algorithm and some basic string functions improved; S&R is now much faster than before
+

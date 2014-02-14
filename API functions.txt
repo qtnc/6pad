@@ -1,0 +1,524 @@
+Here is the list of available API functions for lua scripting in 6pad.
+Don't forget the standard lua library functions which are always available and documented at http://www.lua.org/manual/5.1/manual.html
+For PCRE regular expressions API, see regular expressions.txt
+6pad is using luajit 2.0.0.9 © Mike Pal http://www.luajit.org/
+
+§§Global variables
+window table {
+edit : an edit handle object which can be used to control the main edition area (see further below under edit handle functions)
+menubar : a menu handle representing the menu bar root element, acting as a entry point to the menu API (see further below under menu handle functions)
+currentTab: the currently opened tab (see below under tab handle object and functions).
+tabs: a table containing all currently opened tabs
+hwnd: main window HWND
+hwndEdit: EDIT HWND of the main window
+hwndTabCtrl: Tab control HWND of the main window
+}
+
+§§Global functions
+§alert (message, title)
+Show a message in a box which can be closed by pressing OK.
+Parameters : first is mandatory, second is optional
+message : the message which will apear in the dialog.
+title : the title of the dialog. If missing, "Information" is assumed.
+Returns : nothing
+
+§confirm (message, title)
+Ask a question in a dialog box where the user can answer by pressing yes or no. 
+Parameters : first is mandattory, second is optional
+message : the message which will appear in the dialog.
+title : the title of the dialog box. If missing, "Question" is assumed.
+Returns : true if the user chose yes, false if he chose no or closed the dialog by pressing escape.
+
+§prompt (message, defaultText, title, multilineOrChoiceList)
+Ask the user to type a single text line in a dialog box.
+Parameters : first is mandatory, others are optional.
+message : the message prompt which explains to the user what to type, shown just above the text field.
+defaultText : The initial text proposed in the text field. If missing, the empty string is assumed.
+title : The title of the dialog window. "Input request" is assumed by default.
+multilineOrChoiceList: a table or a boolean
+* a table containing one or more preset values. If not specified, the preset list is assumed to be empty. 
+* A boolean indicating if the input can have more than one line. In that case a text area is shown instead of a text field. False is assumed by default if not specified.
+Remark: A prompt containing presets is always single line. There couldn't be a multiline prompt having presets. You can specify either the preset table or the multiline boolean but not both.
+Returns : the text entered by the user as a string, or nil if he cancelled the dialog box.
+
+§output (message, text, title)
+Show a modless dialog box with a multiline text that the user can copy. Useful for compilation errors, debug traces, program output, etc.
+Parameters : third is optional
+message : an explanation message which appear above the text area
+text : the text to show in the text area. If missing, the empty string is assumed.
+title : the title of the dialog box. IF missing, "Output" is assumed.
+Returns : an edit handle object allowing control of the text area contained in the dialog.
+
+§choice (message, options, title, nonmodal)
+Show a dialog box and allow the user to choose an option ammong a list.
+Parameters : fourth is optional and radically change the behavior of this function. See below.
+message : a short message which appear above the list box and invite the user to selectt an option
+options : a table containing the options to be proposed in the list. This table should be numerically indexed starting to 1 (i.e. options[1] contains the first option, options[2] the second one, etc.) so that it can be traversed with a regular for/ipairs loop.
+title : the title of the dialog box. If missing, "Input request" is assumed.
+nonmodal: if this parameter is passed, is a boolean and is true, the dialog box became modless and a choicehandle object is returned.
+Returns : 
+* If the dialog is in its normal behavior, the text and the ordinal position of the chosen item are returned, or nil if the user cancelled the dialog. 
+* if the dialog is modless because of the fourth parameter, a choice handle object is returned and allow to modify it afterwards (see the choice handle functions further below)
+
+§openDialog (file, title, filters, filterIndex)
+Open a dialog box which let the user select a file to open
+Parameters: all are optional
+file: the file name which will be proposed as default
+title: the title of the dialog box
+filters: the file type filters, in a windows-style multistring, i.e. "Text files\0*.txt\0"
+filterIndex: the index of the initially selected filter
+Returns: the file selected by the user, or nil if he cancelled, +the index of the selected filter
+
+§saveDialog (file, title, filters, filterIndex)
+Open a dialog box which let the user select a file to save
+Parameters: all are optional
+file: the file name which will be proposed as default
+title: the title of the dialog box
+filters: the file type filters, in a windows-style multistring, i.e. "Text files\0*.txt\0"
+filterIndex: the index of the initially selected filter
+Returns: the file selected by the user, or nil if he cancelled, +the index of the selected filter
+
+§chooseFolder (folder, title)
+Open a dialog which let the user select a directory.
+Parameters: both are optional
+folder: the directory which will be proposed as default
+title: the title of the dialog box
+Returns: the directory selected by the user, or nil if he cancelled
+
+§beep (type)
+§beep (frequency, duration)
+Without any parameter : Play the default system sound
+With 1 parameter : play a system sound of the specified type
+With 2 parameters : perform a PC speaker beep with the specified frequency in hertz and duration in miliseconds.
+Use the following values for system sound types :
+1 : simple ding / default system sound
+2 : information / asterisk sound
+3 : exclamation / question / warning sound
+4 : error sound
+
+§playSound (filename)
+Play a wave file
+Parameters :
+filename: full path to a wave file to be played
+Reeturns : nothing
+
+§getClipboardText ()
+Retriev the text currently contained in the system clipboard
+Parameters : none
+Returns : the text contained in the clipboard as a string, or nil if the clipboard does not contain text.
+
+§setClipboardText (text)
+Copy the given text string into the system clipboard
+Parameters : 
+text : the text to be copied
+Returns : nothing
+
+§executeInBackground (function, ...)
+Execute a function in a background thread. Be careful when using this feature, because other lua handlers are unresponsive until function has finished.
+Parameters :
+function : the function to execute in background. You can pass extra arguments to be transmitted to the function.
+Returns : nothing
+
+§addAccelerator (function, accelerator)
+Associate an accelerator with the specified function. The function will be called each time the accelerator is invoked.
+Parameters:
+function: the function to call as a response for the given accelerator
+accelerator: an accelerator as a formatted string like "Alt+F2" or "Ctrl+Shift+P".
+Returns: true if the accelerator has successfully been set, nil otherwise
+Remark: you can cancel an association with the removeAccelerator function or by passing nil as accelerator.
+
+§removeAccelerator (function)
+Remove an accelerator associated with the addAccelerator function.
+Parameters:
+function: the function to dissociate
+Returns: true if the dissociation is successful, nil otherwise
+
+§setTimeout (function, delay)
+Set a timer to execute the specified function once after a defined period of time.
+Parameters:
+delay: the number of milliseconds to wait before calling the function
+function: the function to execute after the specified delay
+Returns: if the timer has actually been set, then a timer identifier is returned. That identifier must be used with clearTimeout to cancel the timer. If the timer hasn't been set correctly, nil is returned.
+
+§setInterval (function, delay)
+Set a timer to execute the specified function periodically with a certain delay frequency.
+Parameters:
+delay: the number of milliseconds to wait before calling the function again
+function: the function to execute 
+Returns: if the timer has actually been set, then a timer identifier is returned. That identifier must be used with clearInterval  to cancel the timer. If the timer hasn't been set correctly, nil is returned.
+
+§clearTimeout (timerIdentifier)
+Cancel a timer previously set with setTimeout.
+Parameters:
+timerIdentifier: the identifier of the timer to cancel, as returned by a previous setTimeout call.
+Returns: true if the timer has correctly been cancelled, false otherwise.
+
+§clearInterval (timerIdentifier)
+Cancel a timer previously set with setInterval.
+Parameters:
+timerIdentifier: the identifier of the timer to cancel, as returned by a previous setInterval call.
+Returns: true if the timer has correctly been cancelled, false otherwise.
+
+§shellExec (file, param, verb, showWindow)
+Execute an operation on a file
+Parameters :
+file: file to execute operation on
+param: if file represents an application to execute, this parameter may contain command line arguments to pass to the application. Otherwise nil.
+verb: operation to execute on the specified file. If not specified, open is assumed by default.
+showWindow: true to show the newly opened window, false to hide it
+Returns: true if something has happened, false if an error occured
+Some common verbs :
+open: an application is executed, a document is opened with its associated application, a folder is opened in the explorer, an URL is loaded in the default browser, etc. This is the default verb if none is specified.
+explore: the specified folder is opened in the explorer
+edit: the specified file is opened for eidition, for example in a text editor
+print: the file is printed out using default printer parameters
+Look at ShellExecute function in the MSDN for more information.
+
+§openDocument (filename)
+Open the specified document. If the document is already opened in another tab, show that tab. Otherwise, open a new tab.
+Parameters:
+filename: file name to open
+Returns: nothing
+
+§§tab handle
+A tab handle is an object representing a tab opened in the main window.
+Tab handles are basicly lua tables, not userdata. It means that you can put custom key/value pairs as you like.
+
+§Properties of tab handle object :
+text, string, read/write: the text of the document in this tab
+filename, string, read only: the name of the file opened in this tab as a string, or nil if this tab represent a currently unsaved document.
+name, string, read only: name of the tab as shown in the window. Contains the filename without the path, or a string like "untitled X" for unsaved documents.
+encoding, number, read/write: encoding used to save the file (0=Default/ANSI, -1=UTF-8 with BOM, -2=Unicode, -3=Unicode with BOM, -4=Unicode big-endian, -5=Unicode big-endian with BOM, see http://msdn.microsoft.com/en-us/library/windows/desktop/dd317756(v=vs.85).aspx for other values)
+lineEnding, number, read/write: line ending used to save the file (0=CRLF, 1=LF, 2=CR, other values raise an error)
+indentType, number, read/write: indentation mode (0=tab, >0=spaces, value must be between 0 and 8 inclusive)
+indentString, string, read only: string representing a level of indentation (either a single tab or a couple of spaces).
+modified, boolean, read/write: either or not the document has been modified since last open/save
+readOnly, boolean, read/write: either or not the document is read only
+
+§save (handle)
+Save the tab, as if file>save is chosen
+§close (handle)
+Close the tab, as if file>close is chosen
+§focus (handle)
+SEt the tab as active
+
+§§Edit handle
+An edit handle is an object representing a text area, either the main one, or one contained in a output dialog.
+
+§Properties of edit handle objects
+text, string, read/write : entire text contained in the text area
+selectedText, string, read/write: text currently selected in the text area
+selectionStart, number, read/write: starting point of current selection
+selectionEnd, number, read/write: ending point of current selection
+currentLine, number, read/write: line number where the caret currently is
+numeric indexes, string, read/write: text of the corresponding line number. You can use negative line numbers to count from the end.
+modified, boolean, read/write: either or not the contents of the text area has been modified
+readOnly, boolean, read/write: either or not the text area is in read only mode
+closed, boolean, read only: either or not the window has been closed
+
+The # operator returns the number of lines contained in the text area.
+
+§Methods of edit handle object :
+§insert (handle, text, start, end)
+§replace (handle, text, start, end)
+Insert or replace a part of text in the text area
+Parameters: start and end are optional
+handle: the handle on which to operate
+text: the text to insert or replace
+start: starting position where to insert or replace
+end: ending position where to replace
+Returns: nothing
+Remarks:
+- With neither start nor end specified, the current selection is overwritten. It is the same as assigning a value to the selectedText property.
+With only a start position specified but no end, the end is the same as the start and therefore implient an insertion in the given start position. After the insertion, the caret is positionned right after the inserted text
+- With both a start and end position, it implient a replacement. If the caret was oustide of the replaced region, its position is unchanged
+- An undo savepoint is made just before the insert or replace operation take place, so that the user can undo it
+- You can specify negative values for start and end to count from the end. In particular, -1 represent the end of the text area after the last character.
+- insert and replace are both refering the same function
+
+§append (handle, text)
+Append a text at the end of the text area. It is equivalent to insert(handle, text, -1)
+Parameters : all are mandatory
+handle: the handle on which to operate
+text: the text to append to the text area
+Remark: 
+- the caret is always positionned at the end of the text area after the appending.
+- an undo savepoint is made just before the appending take place, so that the user can undo the operation.
+
+§offsetOfLine (handle, n)
+Return the character position corresponding to the beginning of the nth line
+Parameters : all are mandatory
+handle: the handle on which to operate
+n: the line number
+
+§lineOfOffset (handle, n)
+Return the line number containing the specified character position
+Parameters : all are mandatory
+handle: the handle on which to operate
+n : character position to know which line it corresponds to
+
+§select (handle, startPoint, endPoint)
+Select the specified portion of the text area. 
+Parameters : all are mandatory
+handle: the handle on which to operate
+startPoint: starting point of selection. If omited, 1 is assumed
+endPoint: ending point of selection. If omited, -1 is assumed.
+Remark: when calling without any parameters, defaults are made so that the entire area is selected.
+
+§close (handle)
+Close the window.
+Parameters :
+handle : the handle on which to operate
+Returns : nothing
+
+§focus (handle)
+Focus the window.
+Parameters :
+handle : the handle on which to operate
+Returns : nothing
+
+§§Menu handle
+The menuhandle table provide functions to control the menu bar. You can add, remove or rearrange items as you wish.
+
+§Properties of menu handle objects
+text, string, read/write: text label of the menu object. You can indicate an underlined letter by preceding it by enpersan.
+accelerator, string, read/write: the accelerator of the menu item, as a string like 'Ctrl+F2'. The objects which contains submenus can't have an accelerator.
+onAction, function, read/write: function which is called when the menu item is activated. A menu object which contains submenus don't launch a function, so it can't have one.
+enabled, boolean, read/write: either or not the menu item is enabled/grayed
+checked, boolean, read/write: either or not the menu item has a check mark
+builtin, boolean, read only: either or not the menu item is built-in or created by a script
+numeric indexes, read only: access to the nth item of a submenu. You can use negative numbers to count from the end.
+
+The # operator returns the number of items contained in the submenu if it is actually a submenu, or false if it is not.
+
+§add (menu, label, accelerator, func)
+§add (menu, position, label, accelerator, func)
+Add a new item to a menu.
+Parameters : position and accelerator are optional
+menu : the menu object where to add the item
+position : the position where to add the new item. It can be negative. If missing or 0, the item will be added at the end.
+label : the string label of the item
+accelerator : an accelerator for the item, as a formated string (i.e. "Ctrl+P" or "Ctrl+Alt+F2")
+func : a function to be called when the item is selected. This function doesn't take any parameter and doesn't have to return a particular value.
+Returns : a menu object representing the newly created item
+Remark: you can set an underlined letter in the label by preceding it with a enpersant. 
+
+§addSubMenu (menu, label)
+§addSubMenu (menu, position, label)
+Create a submenu and append it to the specified menu.
+Parameters : position is optional
+menu : the menu where to add a submenu
+position : the position where to add the new item. It can be negative. If missing or 0, the item will be added at the end.
+label : the string label of the submenu
+Returns : a menu object representing the newly created submenu.
+Remark: you can set an underlined letter in the label by preceding it with a enpersant.
+
+§remove (menu)
+§remove (menu, item)
+Remove an item from a menu
+Parameters :
+with 1 argument : remove that menu item
+With 2 arguments : Remove the item item which is in the menu menu.
+Returns : nothing
+
+§§Choice handle
+The choicehandle table provide functions to control the proposed options in the list box of a choice dialog created by the choice function.
+
+§Properties of choice handle objects
+selectedIndex, number, read/write: index of the currently selected item. If no item is selected, contains 0
+selectedItem, string, read/write: text of the currently selected item. If no item is selected, contains nil
+numeric indexes, string, read/write: text of the corresponding item
+closed, boolean, read only: either or not the choice window is closed
+
+§add (handle, label, index)
+Add an item to the list.
+Parameters : index is optional
+handle : the handle on which to operate
+label : the label of the new item to add; label can also be a table, in which case all elements are added in turn
+index : the index where to add the new item. 0 or missing assume the end of the list.
+Returns : nothing
+
+§remove (handle, index)
+Remove an item from the list.
+Parameters :
+handle : the handle on which to operate
+index : the index to remove.
+Returns : nothing
+
+§clear (handle)
+Remove all items from the list.
+Parameters :
+handle : the handle on which to operate
+Returns : nothing
+
+§find (handle, text, index)
+Search for an item in the list
+Parameters :
+handle : the handle on which to operate
+index : optional: the index from where to start searching. Default is 1.
+Returns : index of the found item and is actual text, or nil if not found
+
+§close (handle)
+Close the window.
+Parameters :
+handle : the handle on which to operate
+Returns : nothing
+
+§focus (handle)
+Focus the window.
+Parameters :
+handle : the handle on which to operate
+Returns : nothing
+
+§§Progress handle
+These functions are aimed to manage progress dialogs. This type of dialog show a progress bar indicating the progress of a lengthy task and allow the user to cancel it by pressing a button.
+
+Progress handle properties :
+title, string, read/write: title of the progress dialog
+text, string, read/write: short text displayed under the progress bar to explain what is being doing at the moment, i.e. task status, line/page/file currently processed, volume downloaded/processed so far, download/processing speed, etc.
+value, number, read/write: progress of the task between 0 and 1, where 0 equals 0% and 1 equals 100%.
+cancelled, boolean, read only: tell if the user pressed the cancel button. If true, best efforts should be made to quickly abort the task in progress and actually close the dialog with the close function. The dialog isn't automatically closed when pressing the cancel button.
+
+§progress.open ()
+OPen a new progress dialog and immediately show it to the user. Returns a progress handle object which let you manage the progress dialog afterwards. Title and text are set to be empty and value is set to 0.
+§progress.close (handle)
+Close a progress dialog
+
+§§Process API
+The process API allow use of bidirectional pipes, while standard io.popen cannot.
+Remark: this API must be loaded with a call to require('process') before being available
+
+§process.open (command)
+Open a new process using the given command line, return a process handle
+§process.read, process.write, process.flush, process.lines, process.close: same use as standard functions in io.* and file.*
+§process.wait (pHandle) 
+Wait for the process to terminate.
+§process.close(pHandle)
+WAit for the process to terminate, close it and return its error code
+§process.destroy(pHandle)
+Immediately terminate the process and return its error code
+
+§§File and directories API
+Remark: this API must be loaded with a call to require('filedir') before being available
+
+§os.filesize (filename)
+Return the size of the specified file in bytes
+§os.filemtime(filename), os.filectime(filename), os.fileatime(filename)
+Returns respectively the last modification time, the creation time and the last access time of the file specified.
+§io.move (old, new) or io.rename(old, new)
+Rename and/or move old to new
+§io.copy (original, new, failIFExists)
+Copy original file to a new one. Third parameter is optional.
+If new already exists and if failIfExists is true, then the copy operation fails
+Otherwise, the existing file is overwritten (failIfExists = false by default)
+§os.symlink (target, linkfile)
+Create a symbolic link named linkfile pointing to target. Symbolic links are supported since windows vista. On XP, this function always fails.
+IF called without arguments, returns true if symbolic links are supported, false otherwise.
+§os.delete (filename)
+Delete the specified file.
+§os.mkdir (path)
+Create a new directory.
+§os.rmdir (path)
+Delete an empty directory.
+§os.chdir (path)
+Without any arguments: return the current directory, which is the base for all relative filenames
+With a string argument: change the current directory to the one specified.
+§os.appdir ()
+Returns the directory where 6pad is located
+§os.realpath (path)
+Resolve the relative path given to an absolute path
+§os.isfile (path)
+Test if the specified path point to an existing file
+§os.isdir (path)
+Test if the specified path point to an existing directory
+§os.glob (pattern)
+Return an iterator that iterates through the files having specified pattern.
+For example that loop :
+for file in io.glob('*.lua') do print(file) end
+will print a list of lua files present in the current directory.
+The iterator produce 4 values per loop: file name, is directory, last modified time, file size.
+
+§§Event list
+Event handlers are function which are called whenever a particular event occurs. They are in fact special properties with a specific name starting by "on".
+
+The following events can be attached both to window and to a particular tab.
+* By attaching it to window, the event is global. It is called whenever the corresponding action occurs, regardless of the tab currently active.
+* By attaching it to a particular tab, the event is only triggered when the corresponding tab is active
+If an event is set for a tab, it takes precedence over the one set on window, and the global window event is not called in that case.
+
+§onEnter : triggered when the enter key is pressed in the edition area. The follow indentation option must be checked in order for this event to work.
+Funcion parameters : text of the line just finishing as string, line number of the just finishing line as number
+Function returns : 
+* a number between -99 and 99 add or remove the corresponding number of indent levels. 
+* A string insert that string at the beginning of the new line. 
+* false prevent a new line from being started
+* true or nil does the normal enter
+
+§onLineChange: triggered when the cursor changed to another line
+Function parameters: tab handle, key code that made the change
+Function Return: irrelevant
+
+§onKeyDown : triggered when a key is pressed in the main edition area
+Function parameters: virtual key code as integer, state of toggle keys as integer
+Function returns: irrelevant
+
+§onKeyUp: triggered when a key is released in the main edition area
+Function parameters: virtual key code as integer, state of toggle keys as integer
+Function returns: irrelevant
+
+§onKeyPress : triggered when a character is pressed in the main edition area
+Function parameters: ascii code as integer, state of toggle keys as integer
+Function returns: false to ignore that key press and thus not insert the corresponding character in the main edition area, true to accept
+
+§onBeforeSave: triggered just before the file is being saved
+Function Parameters : tab handle of the tab being saved
+Function Returns : true continue the save, false abort it.
+Remark: you can modify properties text, encoding, lineEnding and indentType to change the actual contents saved
+
+§onAfterSave: triggered just after the file has been saved
+Function Parameters : tab handle of the tab which has just been saved
+Function Returns : irrelevant
+
+§onBeforeOpen : triggered before a file is opened or reloaded
+Function Parameters : tab handle of the tab where a file is being opened
+Function returns: true to accept opening the file, false to refuse. 
+Remark: you can modify properties text, encoding, lineEnding and indentType to change the actual contents loaded
+
+§onAfterOpen: triggered just after a file has been opened or reloaded
+Function Parameters : tab handle of the tab which has just been opened or reloaded
+Function  Returns : irrelevant
+
+§onBeforeTabClose: triggered when a tab is being closed
+Function Parameters : tab handle of the tab being closed
+Function return: false to prevent the tab from being closed, true to accept
+
+The following events can only be set on window. They can only be global. Setting them on a particular tab whould be illogical :
+
+§onTabNew: triggered just after a new tab is created
+Function Parameters : the tab newly created
+Function Returns : irrelevant
+Remark: you can determine if the tab created is going to be a new empty document or an opened file by checking the name or the filename property
+
+§onAfterTabClose: triggered just after a tab has been closed
+Function parameters: nothing
+Function return: irrelevant
+
+§onBeforeTabChange: triggered just before switching to another tab
+Function parameters: the tab which is going to be inactive
+Function returns: true to accept tab switch, false to keep current tab active and avoid switching tab
+
+§onAfterTabChange: triggered just after having switched to another tab
+Function parameters: the tab which has just been activated
+Function returns: irrelevant
+
+The following events are supported on edit and choice handles :
+§onClose: sent when the window is about to be closed.
+Function parameters: an handle representing the window (edit or choice) being closed
+Function returns : true to accept the closing request, false to prevent the window from actually being closed
+
+The following events are supported on choice handles only :
+§onAction: sent when the user validate an option in the list by pressing enter 
+Function parameters: choice handle object, text of the selected item, ordinal position of the selected item
+Function returns: true to close the modless window, false to remain it open
+
+

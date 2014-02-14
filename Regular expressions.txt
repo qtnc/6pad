@@ -1,0 +1,76 @@
+Here is a small refresh on regular expressions syntax, and how to use string.pfind, string.prfind, string.pgsub, string.pmatch and string.pgmatch in lua scripts.
+
+§Refresh on regular expression syntax
+[abc]	one of a, b  or c
+[^abc]	All but a, b or c (complement)
+[a-z]	One character between a and z 
+x?	zero or one time x
+x+	one or more times x, using maximum x as possible
+x*	zero, one or more times x, using maximum x as possible
+x*?	zero, one or more times x, but using minimum x as possible
+x+?	one or more times x, but using minimum x as possible
+x{n,m}	between n and m times x
+x{n,}	at least n times x
+x{,m}	at most m times x
+x{n}	exactly n times x
+^	beginning of a line
+$	end of a line
+\d	digit
+\D	All but digit
+\w	word character
+\W	All but word character
+\s	space character
+\S	All but space character
+\b	Word boundary
+\B	Not word boundary
+\n	Reference to subpattern number n inside a pattern
+$n	Reference to the subpattern number n inside the replacement string
+(...)	Grouping and capturing subpattern
+(?:...)	Grouping but not capturing subpattern
+(?#...)	comment
+(?=...)	look ahead positive assertion
+(?!...)	look ahaead negative assertion
+(?<=...)	look behind positive assertion
+(?<!...)	look behind negative assertion
+(?R)	Recursive pattern
+
+§using patterns in lua
+To use a pattern in lua, you must normally also use a prefix character in order to specifiy pattern options. Then you write the pattern, close the pattern with the same prefix and finally add zero, one or more pattern options.
+If you already used preg_* functions in the php programming language, prefixes are used in the same way.
+Except alphanumeric, any character can be used as prefix. For example : #pattern#options, here # is the prefix character
+Each character after the ending prefix specifiy a pattern option. The options includes :
+m : multiline. If this option is activated, ^and $ will represent line beginning or ending, and not only beginning and ending of the whole subject string
+s : dot match all. If this option is activated, the dot operator can match a new line. Without that option, it does not.
+i : case insensitive. If this option is activated, the match is case insensitive
+u : ungreedy. Invert the ungreedyness of the regular expression
+d : dollar end only (see PCRE doc)
+a : anchored (see PCRE doc)
+
+Example : #[a-z]+#i would match any word composed of one or more letters and will be case insensitive
+
+§lua string.preg_match: match a string against a PCRE pattern
+string.preg_match (string, pattern, offset)
+Parameters: string=the string to be matched, pattern=the pattern to use, offset=the initial starting position where to start looking for pattern
+Returns: matched strings or nil if no match. First return value is the entire match, second return is the first parenthesis, third return is the second parenthesis, etc. AS an exception, en empty pair of parenthesis would return the index in the string.
+
+§lua string.pfind: search a match in the string using the given pattern
+§lua string.prfind: search a match in the string using the given pattern, beginning from the end
+string.pfind (string, pattern, offset, emptyParenthesisToIndex)
+string.prfind (string, pattern, offset, emptyParenthesisToIndex)
+Parameters: string=the string to be matched, pattern=the pattern to use, offset=the initial starting position where to start looking for pattern, emptyParenthesisToIndex = boolean indicating if empy matches must be in fact return string indexes (like in lua-style regex). Offset and emptyParenthesisToIndex are optional parameters.
+Returns: starting and ending position of the first match found, or nil if nothing is found
+
+§lua string.pgsub : perform a search/replace operation using a PCRE pattern
+string.pgsub (string, pattern, replacement)
+Parameters: string=string to make the replacements in, pattern=the pattern to match, replacement=the replacement string, table or function
+Returns : the new string with the replacements performed
+Remark : you can use either a string, a table or a function for replacement.
+* If you use a string, you can use submatch with $n, where n is a parenthised submatch ($0 is replaced by the whole matche)
+* IF you use a function, it receives the matches as arguments (first argument is the whole match, second argument is the first parenthesis, third argument is the second parenthesis, etc.), and must return the replacement string, or nil if the original string has to be kept unchanged. As an exception, an empty parenthesis pair would give the corresponding string index.
+* IF you use a table, then replacements are looked up in the table, using parenthesized matches as table keys
+
+§string.pgmatch: iterate through matches
+§string.pgmatch (string, pattern, offset, emptyParenthesisToIndex)
+Return an iterator that can be used to iterate through all matches in the string
+Same arguments as string.pfind.
+

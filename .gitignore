@@ -1,0 +1,8 @@
+.svn/
+obj/
+*.o
+*.exe
+*.dll
+*.tmp
+*.log
+*.zip

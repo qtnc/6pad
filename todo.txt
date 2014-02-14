@@ -1,0 +1,7 @@
+Todo list for version 1.5
+* Find algorithm to reduce cancel/redo memory consumption; kind of intelligent diff, to replace the existing very trivial memory-consumer algorithm
+* Add indentation-aware copy/paste, that can adjust the indentation form and level on paste
+* Add indentation security, that disallow writing something that can break it unintantionnally on the beginning of a line
+* Add onPaste, onCopy, onCut events
+* Completely separate filedir+process API into an independant and optional DLL, to reduce 6pad core size
+* Remove executeInBackground: too dangerous, and replace by an optional multithreading-specialized library

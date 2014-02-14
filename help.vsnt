@@ -1,0 +1,1713 @@
+<?xml version="1.0" encoding="UTF-8"?><VisuNote flag="21" updt="5222DE1A" maxlevel="10" docflag="4" exportpath="" author="QuentinC" updtby="Quentin" default_flag="0" default_addb="footer" bookid="" desc="" lang="" subject="" version=""><Txt name="6pad scripting documentation" flag="21" updt="4FCDB470" id="6padapi"><Txt name="Global functions" flag="16" updt="4FC9C2C0" id="4FC8F14B" addb="footer"><Txt name="Dialog boxes" flag="16" updt="4FCDB068" id="4FCDA42D" addb="footer"><Txt name="alert" flag="16" updt="4FC94054" id="4FC8F5D1" addb="footer">= alert
+Show a simple message in a dialog box which can be closed by pressing OK.
+
+== Syntax
+alert (message, title)
+
+== Parameters
+- message : the message which will apear in the dialog.
+- title : the title of the dialog, optional. If missing, "Information" is assumed.
+
+== Returns
+This function doesn't return anything.
+</Txt><Txt name="choice" flag="16" updt="4FC94249" id="4FC9418E" addb="footer">= choice
+Show a dialog box and allow the user to choose an option ammong a list.
+
+== Syntax
+choice (message, options, title, nonmodal)
+
+== Parameters
+- message : a short message which appear above the list box and invite the user to selectt an option
+- options : a table containing the options to be proposed in the list. This table should be numerically indexed starting to 1 (i.e. options[1] contains the first option, options[2] the second one, etc.) so that it can be traversed with a regular for/ipairs loop.
+- title : the title of the dialog box, optional. If missing, "Input request" is assumed.
+- nonmodal: if this parameter is passed, is a boolean and is true, the dialog box became modless and a choice handle object is returned.
+
+== Returns
+- If the dialog is in its normal behavior, the text and the ordinal position of the chosen item are returned, or nil if the user cancelled the dialog. 
+- if the dialog is modless because of the fourth parameter, a choice handle object is returned and allow to modify it afterwards (See under %%4FC8F2A5.Link%% to see what you can do with that handle).
+</Txt><Txt name="chooseFolder" flag="16" updt="4FC94489" id="4FC9443D" addb="footer">= chooseFolder
+Open a dialog which let the user select a directory.
+
+== Syntax
+chooseFolder (folder, title)
+
+== Parameters
+- folder: the directory which will be proposed as default, optional. If none is specified, then no default directory is proposed to the user.
+- title: the title of the dialog box, optional.
+
+== Returns
+The directory selected by the user, or nil if he cancelled
+</Txt><Txt name="confirm" flag="16" updt="4FC9407D" id="4FC8F870" addb="footer">= confirm
+Ask a question in a dialog box where the user can answer by pressing yes or no. 
+
+== Syntax
+confirm (message, title)
+
+== Parameters
+- message : the message which will apear in the dialog.
+- title : the title of the dialog, optional. If missing, "Question" is assumed.
+
+== Returns
+True if the user chose yes, false if he chose no or closed the dialog box by pressing escape.
+	
+</Txt><Txt name="openDialog" flag="16" updt="4FC9433A" id="4FC9425E" addb="footer">= openDialog
+Open a dialog box which let the user select a file to open
+
+== Syntax
+openDialog (file, title, filters, filterIndex)
+
+== Parameters
+- file: the file name which will be proposed as default, optional. If none is specified, no default filename is proposed to the user.
+- title: the title of the dialog box, optional.
+- filters: the file type filters, in a windows-style multistring, i.e. "Text files\0*.txt\0". If unspecified, the only filter available is the default all files filter.
+- filterIndex: the index of the initially selected filter, optional. If omited, 1 is assumed.
+
+== Returns
+The file selected by the user, or nil if he cancelled, plus the index of the selected filter as a second return value.
+
+</Txt><Txt name="output" flag="16" updt="4FC94137" id="4FC8FA5D" addb="footer">= output
+Show a modless dialog box with a multiline text that the user can copy. Useful for compilation errors, debug traces, program output, etc.
+
+== Syntax
+output (message, text, title)
+
+== Parameters
+- message : an explanation message which appear above the text area
+- text : the text to show in the text area. If missing, the empty string is assumed.
+- title : the title of the dialog box, optional. IF missing, "Output" is assumed.
+
+== Returns
+An edit handle object allowing control of the text area contained in the dialog. See %%4FC8F1F5.Link%% for more details about what you can do with that handle.
+
+</Txt><Txt name="prompt" flag="16" updt="4FC9416A" id="4FC8F92D" addb="footer">= prompt
+Ask the user to type a single text line in a dialog box.
+
+== Syntax
+prompt (message, defaultText, title, multilineOrChoiceList)
+
+== Parameters
+- message: the message prompt which explains to the user what to type, shown just above the text field.
+- defaultText : The initial text proposed in the text field, optional. If missing, the empty string is assumed.
+- title : The title of the dialog window, optional. "Input request" is assumed by default.
+- multilineOrChoiceList: an optional table or boolean
+    - a table containing one or more preset values. If not specified, the preset list is assumed to be empty. 
+    - A boolean indicating if the input can have more than one line. In that case a text area is shown instead of a text field. False is assumed by default if not specified.
+
+== Returns
+The text entered by the user as a string, or nil if he cancelled the dialog box.
+
+== Remark
+A prompt containing presets is always single line. There couldn't be a multiline prompt having presets. You can specify either the preset table or the multiline boolean but not both.
+
+</Txt><Txt name="saveDialog" flag="16" updt="4FC94414" id="4FC9433E" addb="footer">= saveDialog
+Open a dialog box which let the user select a file to save.
+
+== Syntax
+saveDialog (file, title, filters, filterIndex)
+
+== Parameters
+- file: the file name which will be proposed as default, optional. If none is specified, no default filename is proposed to the user.
+- title: the title of the dialog box, optional.
+- filters: the file type filters, in a windows-style multistring, i.e. "Text files\0*.txt\0". If unspecified, the only filter available is the default all files filter.
+- filterIndex: the index of the initially selected filter, optional. If omited, 1 is assumed.
+
+== Returns
+The file selected by the user, or nil if he cancelled, plus the index of the selected filter as a second return value.
+
+	</Txt><Txt name="warning" flag="16" updt="4FC94063" id="4FC8F780" addb="footer">= warning
+Show a simple message in a dialog box which can be closed by pressing OK. The difference with %%4FC8F5D1.Link%% is that alert is intended as an information message, where warning is, as its name suggests, more intended for a warning or error message.
+
+== Syntax
+warning (message, title)
+
+== Parameters
+- message : the message which will apear in the dialog.
+- title : the title of the dialog, optional. If missing, "Warning" is assumed.
+
+== Returns
+This function doesn't return anything.
+</Txt>= Dialog boxes
+This section contains all functions  to manage different types of dialog boxes.
+</Txt><Txt name="Timing and threading" flag="16" updt="4FCDB0B7" id="4FCDAE5D" addb="footer"><Txt name="clearInterval" flag="16" updt="4FC9AD7C" id="4FC9AC71" addb="footer">= clearInterval
+Cancel a timer previously set with %%4FC9AC6C.Link%%.
+== Syntax
+clearInterval (timerIdentifier)
+== Parameters
+- timerIdentifier: the identifier of the timer to cancel, as returned by a previous %%4FC9AC6C.Link%% call.
+== Returns
+True if the timer has correctly been cancelled, false otherwise.
+</Txt><Txt name="clearTimeout" flag="16" updt="4FC9AD40" id="4FC9AC64" addb="footer">= clearTimeout
+Cancel a timer previously set with %%4FC9AC30.Link%%.
+== Syntax
+clearTimeout (timerIdentifier)
+== Parameters
+- timerIdentifier: the identifier of the timer to cancel, as returned by a previous %%4FC9AC30.Link%% call.
+== Returns
+True if the timer has correctly been cancelled, false otherwise.
+</Txt><Txt name="executeInBackground" flag="16" updt="4FC9AECA" id="4FC9AE83" addb="footer">= executeINBackground
+Execute a function in a background thread. Be careful when using this feature, because other lua handlers are unresponsive until function has finished.
+== Syntax
+executeInBackground (function, ...)
+== Parameters
+- function : the function to execute in background. You can pass extra arguments to be transmitted to the function.
+== Returns 
+NO return value
+</Txt><Txt name="setInterval" flag="16" updt="4FC9ACF9" id="4FC9AC6C" addb="footer">= setInterval
+Set a timer to execute the specified function periodically with a certain delay frequency.
+== Syntax
+setInterval (function, delay)
+== Parameters
+- function: the function to execute 
+- delay: the number of milliseconds to wait before calling the function again
+== Returns
+If the timer has actually been set, then a timer identifier is returned. That identifier must be used with %%4FC9AC71.Link%% to cancel the timer. If the timer hasn't been set correctly, nil is returned.
+</Txt><Txt name="setTimeout" flag="16" updt="4FC9AC95" id="4FC9AC30" addb="footer">= setTimeout
+Set a timer to execute the specified function once after a defined period of time.
+== Syntax
+setTimeout (function, delay)
+== Parameters
+- function: the function to execute after the specified delay
+- delay: the number of milliseconds to wait before calling the function
+== Returns
+If the timer has actually been set, then a timer identifier is returned. That identifier must be used with %%4FC9AC64.Link%% to cancel the timer. If the timer hasn't been set correctly, nil is returned.
+
+</Txt><Txt name="sleep" flag="16" updt="4FC9AF67" id="4FC9AF2D" addb="footer">= sleep
+Wait for the specified number of miliseconds.
+
+== Syntax
+sleep (time)
+
+== Parameters
+- time: the time to wait, in miliseconds
+
+== Returns
+No return value
+</Txt>= Timing and threading
+This section contains functions to manage postponed executions and running tasks in background.
+</Txt><Txt name="Text, document and interface management" flag="16" updt="4FCDB0F7" id="4FCDAF03" addb="footer"><Txt name="addAccelerator" flag="16" updt="4FC9AC14" id="4FC9AB3A" addb="footer">= addAccelerator
+Associate an accelerator with the specified function. The function will be called each time the accelerator is invoked.
+
+== Syntax
+addAccelerator (function, accelerator)
+
+== Parameters
+- function: the function to call as a response for the given accelerator
+- accelerator: an accelerator as a formatted string like "Alt+F2" or "Ctrl+Shift+P".
+
+== Returns
+True if the accelerator has successfully been set, nil otherwise
+
+== Remark
+You can cancel an association with the %%4FC9ABAF.Link%% function or by passing nil as accelerator.
+</Txt><Txt name="getClipboardText" flag="16" updt="4FC94633" id="4FC945E0" addb="footer">= getClipboardText
+Fetch the text currently contained in the system clipboard
+
+== Syntax
+getClipboardText ()
+
+== Parameters
+There isn't any parameter.
+
+== Returns
+The text contained in the clipboard as a string, or nil if the clipboard does not contain text.
+</Txt><Txt name="openDocument" flag="16" updt="4FC9AE67" id="4FC9AE20" addb="footer">= openDocument
+Open the specified document. If the document is already opened in another tab, show that tab. Otherwise, open a new tab.
+== Syntax
+openDocument (filename)
+== Parameters
+- filename: file name to open
+== Returns
+No return value</Txt><Txt name="removeAccelerator" flag="16" updt="4FC9ABF6" id="4FC9ABAF" addb="footer">= removeAccelerator
+Remove an accelerator associated with the %%4FC9AB3A.Link%% function.
+
+== Syntax
+removeAccelerator (function)
+== Parameters
+- function: the function to dissociate
+== Returns
+True if the dissociation is successful, nil otherwise
+</Txt><Txt name="setClipboardText" flag="16" updt="4FC94760" id="4FC94648" addb="footer">= setClipboardText
+Copy the given text string into the system clipboard
+
+== Syntax
+setClipboardText (text)
+
+== Parameters
+- text : the text to be copied
+
+== Returns
+NO return value.
+</Txt>= Text, document and interface management
+This section contains functions to manage general aspects of text edition, document and interface enhancements.
+</Txt><Txt name="Miscellaneous" flag="16" updt="4FCDB11E" id="4FCDAFB5" addb="footer"><Txt name="beep" flag="16" updt="50558181" id="4FC944AD" addb="footer">= beep
+Play the default system sound, a system sound of the specified type, or perform a PC speaker beep with the specified frequency in hertz and duration in miliseconds.
+
+== Syntax
+- beep(type)
+- beep (frequency, duration)
+
+== Parameters
+- type: the type of predefined beep to produce
+- frequency: frequency of the beep in hertz
+- duration: duration of the beep in milliseconds
+
+== Remark
+Use the following values for system sound types :
+- 1: simple ding / default system sound
+- 2 : information / asterisk sound
+- 3 : exclamation / question / warning sound
+- 4 : error sound
+
+== Returns
+This function doesn't return anything.
+</Txt><Txt name="playSound" flag="16" updt="4FC945E7" id="4FC94570" addb="footer">= playSound
+Plays a WAV file asynchronously
+
+== Syntax
+playSound (filename)
+
+== Parameters
+- filename: file name of the WAV sound to play
+
+== Returns
+This function doesn't return anything.
+</Txt><Txt name="shellExec" flag="16" updt="4FDF0AE1" id="4FC9ADA7" addb="footer">= shellExec
+Execute an operation on a file
+
+== Syntax
+shellExec (file, param, verb, showWindow)
+== Parameters
+- file: file to execute operation on
+- param: if file represents an application to execute, this parameter may contain command line arguments to pass to the application. Otherwise nil.
+- verb: operation to execute on the specified file. If not specified, open is assumed by default.
+- showWindow: true to show the newly opened window, false to hide it
+== Returns
+True if something has happened, false if an error occured
+== Remark
+Some common verbs :
+- open: an application is executed, a document is opened with its associated application, a folder is opened in the explorer, an URL is loaded in the default browser, etc. This is the default verb if none is specified.
+- explore: the specified folder is opened in the explorer
+- edit: the specified file is opened for eidition, for example in a text editor
+- print: the file is printed out using default printer parameters
+
+Look at ShellExecute function in the MSDN for more information.
+
+</Txt>= Miscellaneous
+This section contains otherwise unclassified global functions.
+</Txt>= Global functions
+This section contains global functions that forms the base part of 6pad scripting environment. Most of them are aimed to manage documents, tabs, dialog boxes, and other general aspects.
+</Txt><Txt name="Additionnal functions" flag="16" updt="4FC9C1E3" id="4FC9B0FE" addb="footer"><Txt name="isinteger" flag="16" updt="4FC9BFAB" id="4FC9BF69" addb="footer">= isinteger
+Tests if the given number is an integer
+
+== Syntax
+isinteger (n)
+
+== Parameters
+- n: the number to test
+
+== Returns
+True if the given number is an integer, false otherwise
+</Txt><Txt name="isnan" flag="16" updt="4FC9BF6C" id="4FC9BF0B" addb="footer">= isnan
+Determines if the given number is the special value "not a number" as known as NaN.
+
+== Syntax
+isnan (n)
+
+== Parameters
+- n: the number to test
+
+== Returns
+True if n is not a number (NaN), false otherwise
+</Txt><Txt name="math.e" flag="16" updt="4FC9BF06" id="4FC9BEC3" addb="footer">= math.e
+Containts the euler number 2.7182818284590452353602874713527</Txt><Txt name="math.log2" flag="16" updt="4FC9BEC0" id="4FC9BE18" addb="footer">= math.log2
+Compute the logarithm base 2 of the given number, or the logarithm of another base is specified.
+
+== Syntax
+math.log2 (n, b)
+
+== Parameters
+- n: the number for which the logarithm must be computed
+- b: the logarithm base, optional. 2 is assumed by default.
+
+== Returns
+The logarithm base b of n is returned.
+</Txt><Txt name="math.round" flag="16" updt="4FC9BE1F" id="4FC9BC91" addb="footer">= math.round
+Rounds given number to the nearest integer, or to the nearest number having the specified number of decimals. This function is surprisingly not part of standard lua distribution.
+
+= Syntax
+math.round (n, precision)
+
+
+== Parameters
+- n: the number to round
+- precision: the number of decimals that the returned number must have, optional. If omited, 0 is assumed by default and coresponds to an integer rounding.
+
+== Returns
+The rounded number
+</Txt><Txt name="math.tobase" flag="16" updt="4FC9BC8E" id="4FC9BBE9" addb="footer">= math.tobase
+Convert an integer to a string in the given base
+
+== Syntax
+math.tobase (n, base)
+
+== Parameters
+- n: the number to convert into a string
+- base: the base in which to convert, optional. 10 is asumed by default, in which case the standard function tonumber has exactly the same effect.
+
+== Returns
+The number converted in a string.
+</Txt>= Additionnal functions
+This section contains additionnal functions that are not in standard lua, but can be useful in a general fashion including eventually outside 6pad environment. They don't fit in another category.
+
+</Txt><Txt name="Redefined functions" flag="16" updt="4FC9C22A" id="4FC9B141" addb="footer"><Txt name="os.execute" flag="16" updt="50558241" id="4FC9BFCA" addb="footer">= os.execute
+Execute the given command in another process and wait its completion.
+
+== Syntax
+os.execute (command)
+
+== Parameters
+- command: the command to execute
+
+== Returns
+The error code of the process is returned. It is usually 0 for a successful execution, a positive value (often 1) for a failed execution (i.e. the process failed to do the desired task), and a negative value for system errors (i.e. unable to run the desired process)
+
+== Remark
+os.execute runs synchronously. It means that it doesn't return until the called process exits. If you want to run a process asynchronously, use %%4FC9ADA7.Link%%. If you want to run a process asynchronously and have control on it, see %%4FC8F39B.Link%%.
+
+== Difference with standard lua
+IN standard lua, os.execute opens a DOS box on windows. This is usually not desired in a GUI application. This redefinition of os.execute adresses this issue, but is otherwise used without another difference.
+</Txt>= Redefined functions
+This section contains functions from standard lua that have been redefined or extended to have a better integration in the 6pad environment.
+</Txt><Txt name="Exported C functions" flag="0" updt="4FFFAE0A" id="4FFFAD69" addb="footer"><Txt name="luaopen_filedir" flag="0" updt="50422FFC" id="50422EFC" addb="footer">= luaopen_filedir
+Load the file and directories API into a lua state. This function is exported so that an external lua state can access the API. Use package.loadlib to load this library. See the lua manual for more details on how to use this function.
+
+== Syntax
+int __declspec(dllexport) luaopen_filedir (lua_State*) ;
+
+
+</Txt><Txt name="luaopen_processapi" flag="0" updt="50423037" id="luaopen_filedir" addb="footer">= luaopen_processapi
+Load the process advanced API into a lua state. This function is exported so that an external lua state can access the API. Use package.loadlib to load this library. See the lua manual for more details on how to use this function.
+
+== Syntax
+int __declspec(dllexport) luaopen_processapi (lua_State*) ;
+
+
+</Txt><Txt name="luaopen_progressapi" flag="0" updt="5042317F" id="luaopen_processapi" addb="footer">= luaopen_progressapi
+Load the progress dialog API into a lua state. This function is exported so that an external lua state can access the API. Use package.loadlib to load this library. See the lua manual for more details on how to use this function.
+
+== Syntax
+int __declspec(dllexport) luaopen_progressapi (lua_State*) ;
+
+
+</Txt><Txt name="registerProtocolReader" flag="0" updt="4FFFB44F" id="4FFFAE10" addb="footer">= registerProtocolReader
+Register a custom file reader able to fetch files from originally unsupported mediums, such as HTTP, FTP, virtual drives, compressed archives, etc. 
+Custom readers are used whenever a filename begins with &lt;protocol&gt;://, where &lt;protocol&gt; can be any existing protocol such as HTTP or FTP as well as any invented/proprietary one.
+
+
+== Syntax
+typedef const void*(*protocolreader)(const wchar_t* filename, int* length, BOOL* readOnly);
+void __stdcall __declspec(dllexport) registerProtocolReader (protocolreader customReader) ;
+
+== Parameters
+- customReader: the custom reader to register
+
+== Returns
+No return value
+
+== Callback parameters
+- filename: the filename to open, as an unicode string
+- length: a pointer that must be set to the length of the returned data
+- readOnly: a pointer that must be set to TRUE if the file is read only, and FALSE otherwise
+
+== callback returns
+A buffer containing all data read as a single chunk must be returned, or NULL if this custom reader can't fetch data from the file specified for any reason (read error, uncompatible protocol or syntax error).
+
+</Txt><Txt name="registerProtocolWriter" flag="0" updt="4FFFB439" id="4FFFB143" addb="footer">= registerProtocolWriter
+Register a custom writer that will be used to write files on originally unsupported protocols such as HTTP, FTP, virtual drives, compressed archives, etc.
+Custom writers are used whenever a filename begins with &lt;protocol&gt;://, where &lt;protocol&gt; can be any existing protocol such as HTTP or FTP as well as any invented/proprietary one.
+
+== Syntax
+typedef BOOL(*protocolwriter)(const wchar_t* filename, const void* data, int length) ;
+void __stdcall __declspec(dllexport) registerProtocolWriter (protocolwriter customWriter) ;
+
+
+== Parameters
+- customWriter: the custom protocol writer to register.
+
+== Returns
+No return value
+
+== Callback parameters
+- filename: the filename to write to, as an unicode string
+- data: a buffer containing the data to write
+- length: the length of the buffer
+
+== Callback returns
+Return TRUE if the file has been successfully saved, FALSE if the write failed for any reason (write error, uncompatible protocol or syntax error).
+</Txt>= Exported C functions
+This section contains a list of C functions exported by the 6pad executable itself. They can be imported in a lua script through FFI module, or be used within an extension DLL using GetProcAddress windows function.</Txt><Txt name="Event-handling" flag="16" updt="4FCC82FA" id="4FC8F3EB" addb="footer"><Txt name="Window global and tab-specific events" flag="16" updt="4FCC8699" id="4FCC82E9" addb="footer"><Txt name="onAfterOpen" flag="16" updt="4FCC861C" id="4FCC85DC" addb="footer">= onAfterOpen
+Triggered just after a file has been opened or reloaded
+== Function Parameters 
+- %%4FC8F2EB.Link%% of the tab which has just been opened or reloaded
+== Function  Returns 
+Irrelevant
+</Txt><Txt name="onAfterSave" flag="16" updt="4FCC859B" id="4FCC852B" addb="footer">= onAfterSave
+Triggered just after the file has been saved
+== Function Parameters 
+- %%4FC8F2EB.Link%% of the tab which has just been saved
+
+== Function Returns
+Irrelevant
+</Txt><Txt name="onBeforeOpen" flag="16" updt="4FCC85E0" id="4FCC8598" addb="footer">= onBeforeOpen 
+Triggered before a file is opened or reloaded
+== Function Parameters 
+- %%4FC8F2EB.Link%% of the tab where a file is being opened
+
+== Function returns
+True to accept opening the file, false to refuse. 
+
+== Remark
+You can modify properties text, encoding, lineEnding and indentType of the passed object to change the actual contents loaded
+</Txt><Txt name="onBeforeSave" flag="16" updt="4FCC852B" id="4FCC84D2" addb="footer">= onBeforeSave
+Triggered just before the file is being saved
+== Function Parameters 
+- %%4FC8F2EB.Link%% of the tab being saved
+== Function Returns 
+True continue the save, false abort it.
+== Remark
+You can modify properties text, encoding, lineEnding and indentType of the passed object to change the actual contents saved
+</Txt><Txt name="onBeforeTabClose" flag="16" updt="4FCC8654" id="4FCC8618" addb="footer">= onBeforeTabClose
+Triggered when a tab is being closed
+== Function Parameters 
+- %%4FC8F2EB.Link%% of the tab being closed
+== Function return
+False to prevent the tab from being closed, true to accept
+
+</Txt><Txt name="onContextMenu" flag="16" updt="4FE34B07" id="4FE34AB5" addb="footer">= onContextMenu
+Triggered when the context menu of the main edition area is called.
+== Function Parameters 
+- %%4FC8F2EB.Link%% of the current tab.
+== Function return
+False to prevent the default context menu from appearing, true to show it as usual.</Txt><Txt name="onEnter" flag="16" updt="4FCC838B" id="4FCC8335" addb="footer">= onEnter
+Triggered when the enter key is pressed in the edition area. The follow indentation option must be checked in order for this event to work.
+
+== Funcion parameters 
+- text of the line just finishing as string
+- line number of the just finishing line as number
+
+== Function returns
+- A number between -99 and 99 add or remove the corresponding number of indent levels. 
+- Astring insert that string at the beginning of the new line. 
+- False prevent a new line from being started
+- True or nil does the normal enter
+</Txt><Txt name="onKeyDown" flag="16" updt="4FCC840E" id="4FCC83E7" addb="footer">= onKeyDown
+Triggered when a key is pressed in the main edition area
+== Function parameters
+- Virtual key code as integer
+- State of toggle keys as integer
+== Function returns
+Irrelevant
+</Txt><Txt name="onKeyPress" flag="16" updt="4FCC84C1" id="4FCC8488" addb="footer">= onKeyPress
+Triggered when a character is pressed in the main edition area
+== Function parameters
+- ASCII code as integer
+- State of toggle keys as integer
+== Function returns
+False to ignore that key press and thus not insert the corresponding character in the main edition area, true or nil to accep as normal.
+</Txt><Txt name="onKeyUp" flag="16" updt="4FCC848D" id="4FCC8466" addb="footer">= onKeyUp
+Triggered when a key is released in the main edition area
+== Function parameters
+- Virtual key code as integer
+- State of toggle keys as integer
+== Function returns
+Irrelevant
+</Txt><Txt name="onLineChange" flag="16" updt="4FCC83EC" id="4FCC8387" addb="footer">= onLineChange
+Triggered when the cursor changed to another line
+
+== Function parameters
+- %%4FC8F2EB.Link%% of the tab where the event occured
+- key code that triggered the change
+
+== Function Returns
+Irrelevant
+</Txt><Txt name="onStatusBarChange" flag="16" updt="4FE34B59" id="4FE34B18" addb="footer">= onStatusBarChange
+Triggered when the status bar contents have changed
+
+== Function parameters
+- %%4FC8F2EB.Link%% of the current tab.
+
+== Function Returns
+Irrelevant
+</Txt>= Window gglobal and tab-specific events
+The following events can be attached both to window and to a particular tab.
+- By attaching it to window, the event is global. It is called whenever the corresponding action occurs, regardless of the tab currently active.
+- By attaching it to a particular tab, the event is only triggered when the corresponding tab is active
+
+If an event is set for a tab, it takes precedence over the one set on window, and the global window event is not called in that case.
+
+</Txt><Txt name="Window global only events" flag="16" updt="4FCC8680" id="4FCC8667" addb="footer"><Txt name="onAfterTabChange" flag="16" updt="4FCC8776" id="4FCC8751" addb="footer">= onAfterTabChange
+Triggered just after having switched to another tab
+== Function parameters
+- %%4FC8F2EB.Link%% of the tab which has just been activated
+== Function returns
+Irrelevant
+
+</Txt><Txt name="onAfterTabClose" flag="16" updt="4FCC870C" id="4FCC86ED" addb="footer">= onAfterTabClose
+Triggered just after a tab has been closed
+== Function parameters
+No parameters
+== Function return
+Irrelevant
+</Txt><Txt name="onBeforeClose" flag="16" updt="4FE34BD1" id="4FE34B69" addb="footer">= onBeforeClose
+Triggered when a request to completely close 6pad has been received, for example after having pressed Alt+F4.
+== Function parameters
+No parameters
+== Function return
+True to accept closing 6pad, false to refuse.
+</Txt><Txt name="onBeforeTabChange" flag="16" updt="4FCC8758" id="4FCC8717" addb="footer">= onBeforeTabChange
+Triggered just before switching to another tab
+== Function parameters
+- %%4FC8F2EB.Link%% of the tab which is going to be inactive
+== Function returns
+True to accept tab switch, false to keep current tab active and avoid switching tab
+</Txt><Txt name="onTabNew" flag="16" updt="4FCC86E9" id="4FCC86AA" addb="footer">= onTabNew
+Triggered just after a new tab is created
+== Function Parameters 
+- %%4FC8F2EB.Link%% of the tab newly created
+== Function Returns 
+Irrelevant
+== Remark
+You can determine if the tab created is going to be a new empty document or an opened file by checking the name or the filename property
+
+</Txt>= WIndow global only events
+The following events can only be set on window. They can only be global. Setting them on a particular tab whould be illogical :</Txt><Txt name="Edit object events" flag="16" updt="4FCC87C1" id="4FCC8798" addb="footer"><Txt name="onClose" flag="16" updt="4FCC87F6" id="4FCC87BD" addb="footer">= onClose
+Sent when the window is about to be closed.
+== Function parameters:
+- %%4FC8F1F5.Link%% of the window being closed
+
+== Function returns 
+True to accept the closing request, false to prevent the window from actually being closed
+
+
+</Txt><Txt name="onContextMenu" flag="16" updt="4FE34CC4" id="onContextMenu" addb="footer">= onContextMenu
+Sent when the contexte menu is called on the edit field of the dialog box.
+== Function parameters:
+%%4FC8F1F5.Link%% of the current output window.
+
+== Function returns 
+True to let the default context menu appear, false to prevent it from appearing.</Txt>The following events are supported on edit objects :
+</Txt><Txt name="Choice object events" flag="16" updt="4FCC8809" id="4FCC8801" addb="footer"><Txt name="onAction" flag="16" updt="4FCC8876" id="4FCC8834" addb="footer">= onAction
+Sent when the user validate an option in the list by pressing enter 
+== Function parameters
+- %%4FC8F2A5.Link%% where the event occured
+- Text of the selected item
+- Ordinal position of the selected item
+== Function returns
+True to close the modless window, false to remain it open
+</Txt><Txt name="onClose" flag="16" updt="4FCC8832" id="4FCC8802" addb="footer">= onClose
+Sent when the window is about to be closed.
+== Function parameters:
+- %%4FC8F2A5.Link%% of the window being closed
+
+== Function returns 
+True to accept the closing request, false to prevent the window from actually being closed
+
+
+</Txt><Txt name="onContextMenu" flag="16" updt="4FE34C86" id="4FE34BF6" addb="footer">= onContextMenu
+Sent when the contexte menu is called on the list box.
+== Function parameters:
+- %%4FC8F2A5.Link%% of the current choice window.
+
+== Function returns 
+True to let the default context menu appear, false to prevent it from appearing.</Txt>The following events are supported on edit objects :
+</Txt>= Event handling
+Event handlers are function which are called whenever a particular event occurs. They are in fact special properties with a specific name starting by "on".
+</Txt><Txt name="Window object" flag="16" updt="5045EDAF" id="4FC8F314" addb="footer">= Window object
+The window object is the main object of the 6pad scripting. It provides the access points for menu and tabs manipulations. It is always accessible as a global variable called **window**.
+
+== Properties
+||Property name|Type|Access|Description|
+| title | string | read/write | Title of the 6pad main window |
+| statusbar | string | read/write | Contents of the status bar below main edition area |
+| edit  | %%4FC8F1F5.Link%% | read only | an edit handle object which can be used to control the main edition area). See %%4FC8F1F5.Link%% for more details. |
+| menubar  | %%4FC8F215.Link%% | read only | a menu handle representing the menu bar root element, acting as a entry point to the menu API. See %%4FC8F215.Link%% for more details. |
+| currentTab | %%4FC8F2EB.Link%% | read only | the currently opened tab. See %%4FC8F2EB.Link%% for more details. |
+| tabs | table | read only | a table containing all currently opened tabs. |
+| filenameFilter | string | read/write | Save and open dialog boxes default filename filters string |
+| autoWrap | boolean | read/write | auto line wrap feature |
+| smartHome | boolean | read/write | Smart home feature |
+| followIndent | boolean | read/write | Follow indentation parameter |
+| autoReload | boolean | read/write | Auto reload feature |
+| showStatusBar | boolean | read/write | Either or not to show the status bar |
+| hwnd | userdata | read only | main window HWND. |
+| hwndEdit | userdata | read only | EDIT HWND of the main window |
+| hwndTabCtrl | userdata | read only | Tab control HWND of the main window
+</Txt><Txt name="Tab object" flag="16" updt="51B4BD83" id="4FC8F2EB" addb="footer"><Txt name="close" flag="16" updt="4FC9B5C8" id="4FC9B503" addb="footer">= close
+Close the tab, as if File&gt;Close is chosen. A confirmation may be asked to the user, really as if the menu item was clicked.
+
+== Syntax
+tab:close ()
+
+== Parameters
+None
+
+== Returns
+None
+</Txt><Txt name="focus" flag="16" updt="4FC9BB89" id="4FC9BB5C" addb="footer">= focus
+Set the tab to be the active one.
+
+== Syntax
+tab:focus ()
+
+== Parameters
+None
+
+== Returns
+None
+</Txt><Txt name="save" flag="16" updt="4FC9B573" id="4FC9B586" addb="footer">= save
+Save the tab, as if File&gt;Save is chosen.
+
+== Syntax
+tab:save ()
+
+== Parameters
+None
+
+== Returns
+None
+</Txt>= Tab object
+A tab handle is an object representing a tab opened in the main window.
+
+Tab handles are basicly lua tables, not userdata. It means that you can put custom key/value pairs as you like.
+
+== Properties
+||Property name|Type|Access|Description|
+| text | string | read/write | the text of the document in this tab |
+| filename | string | read/write | the name of the file opened in this tab as a string, or nil if this tab represent a currently unsaved document. |
+| name | string | read/write | name of the tab as shown in the window. Contains the filename without the path, or a string like "untitled X" for unsaved documents. |
+| encoding | number | read/write | Charset identifier denoting the encoding used to save the file (see %%51B4B998.Link%% for the exact meaning of this value) |
+| lineEnding | number | read/write | line ending used to save the file (0=CRLF, 1=LF, 2=CR, other values raise an error) |
+| indentType | number | read/write | indentation mode (0=tab, &gt;0=spaces, value must be between 0 and 8 inclusive) |
+| indentString | string | read only | string representing a level of indentation (either a single tab or a couple of spaces). |
+| modified | boolean | read/write | either or not the document has been modified since last open/save |
+| readOnly | boolean | read/write | either or not the document is read only |
+| filenameFilter | string | Save and open dialog boxes filename filters for this tab |
+| filenameFilterIndex | number | Index of the selected filename filter, 0 if none has been selected |
+
+
+</Txt><Txt name="Edit object" flag="16" updt="4FCC6B8F" id="4FC8F1F5" addb="footer"><Txt name="append" flag="16" updt="4FCC6D92" id="4FCC6CCD" addb="footer">= append
+Append a text at the end of the text area. It is equivalent to insert(handle, text, -1)
+
+== Syntax
+edit:append (text)
+
+== Parameters
+- text: the text to append to the text area
+
+== Returns
+No return value.
+
+== Remark
+- the caret is always positionned at the end of the text area after the appending.
+
+When working on the main document edition area, an undo savepoint is made just before the appending take place, so that the user can undo the operation.
+
+</Txt><Txt name="close" flag="16" updt="4FCC6E73" id="4FCC6E2D" addb="footer">= close
+Close the output window.
+
+== Syntax
+edit:close ()
+
+== Parameters
+No parameters
+
+== Returns
+No return value.
+
+
+</Txt><Txt name="focus" flag="16" updt="4FCC6F6A" id="4FCC6E73" addb="footer">= focus
+Focus the window.
+
+== Syntax
+edit:focus ()
+
+== Parameters
+No parameters
+
+== Returns
+No return value.
+
+
+</Txt><Txt name="insert" flag="16" updt="4FCC6C8E" id="4FCC6B8A" addb="footer">= insert
+Insert or replace a part of text in the text area
+
+== Syntax
+edit:insert (text, start, end)
+edit:replace (text, start, end)
+
+== Parameters
+- text: the text to insert or replace
+- start: starting position where to insert or replace, optional.
+- end: ending position where to replace, optional.
+
+== Returns
+NO return value
+
+== Remarks
+- - With neither start nor end specified, the current selection is overwritten. It is the same as assigning a value to the selectedText property.
+- With only a start position specified but no end, the end is the same as the start and therefore implient an insertion in the given start position. After the insertion, the caret is positionned right after the inserted text
+- - With both a start and end position, it implient a replacement. If the caret was oustide of the replaced region, its position is unchanged
+
+When operating on the main document edition area, an undo savepoint is made just before the insert or replace operation take place, so that the user can undo it
+
+- You can specify negative values for start and end to count from the end. In particular, -1 represent the end of the text area after the last character.
+
+- insert and replace are both refering the same function</Txt><Txt name="lineOfOffset" flag="16" updt="4FCC6DDD" id="4FCC6DA4" addb="footer">= lineOfOffset
+Return the line number containing the specified character position
+== Syntax
+edit:lineOfOffset (n)
+
+== Parameters
+- n : character position to know which line it corresponds to
+
+== Returns
+The line number containing the specified character position
+</Txt><Txt name="offsetOfLine" flag="16" updt="4FCC6D7F" id="4FCC6D45" addb="footer">= offsetOfLine
+Return the character position corresponding to the beginning of the nth line
+
+== Syntax
+edit:offsetOfLine (n)
+
+== Parameters
+- n: the line number
+
+== Returns
+The character position corresponding to the beginning of the nth line
+</Txt><Txt name="replace" flag="16" updt="4FCC6CB5" id="4FCC6C8A" addb="footer">= replace
+Replace is a synonym name for the function %%4FCC6B8A.Link%%. See the corresponding topic for more information.
+</Txt><Txt name="select" flag="16" updt="4FCC6E24" id="4FCC6DEF" addb="footer">= select
+Select the specified portion of the text area. 
+
+== Syntax
+edit:select (startPoint, endPoint)
+
+== Parameters
+- startPoint: starting point of selection. If omited, 1 is assumed
+- endPoint: ending point of selection. If omited, -1 is assumed.
+
+== Remark
+When calling without any parameters, defaults are made so that the entire area is selected.
+
+</Txt>= Edit object
+
+The edit object represents the main edition area, or the edition area of an output dialog box (see function %%4FC8FA5D.Link%%).
+
+== Properties
+|| Property name | Type | Access | Description |
+| text | string | read/write  | Entire text contained in the text area |
+| selectedText | string | read/write | Text currently selected in the text area |
+| selectionStart | number | read/write | Starting point of current selection |
+| selectionEnd | number | read/write | Ending point of current selection |
+ | currentLine | number | read/write | line number where the caret currently is |
+| \[numeric indexes] | string | read/write | Text of the corresponding line number. You can use negative line numbers to count from the end. |
+| modified | boolean | read/write | Either or not the contents of the text area has been modified |
+| readOnly | boolean | read/write | Either or not the text area is in read only mode |
+| closed | boolean | read only | either or not the window has been closed |
+
+The # operator returns the number of lines contained in the text area.
+
+</Txt><Txt name="Menu object" flag="16" updt="4FDA0896" id="4FC8F215" addb="footer"><Txt name="add" flag="16" updt="50558262" id="4FCC716C" addb="footer">= add
+Add a new item to a menu.
+
+== Syntax
+- menu:add (label, func)
+- menu:add (label, accelerator, func)
+- menu:add (position, label, func)
+- menu:add (position, label, accelerator, func)
+
+== Parameters
+- position : the position where to add the new item, optional. It can be negative. If missing or 0, the item will be added at the end.
+- label : the string label of the item. You can set an underlined letter by preceding it with a enpersant. 
+- accelerator : an accelerator for the item, as a formated string (i.e. "Ctrl+P" or "Ctrl+Alt+F2"), optional. If no accelerator is desired, this parameter can be nil or can simply be left out.
+- func : a function to be called when the item is selected. This function doesn't take any parameter and doesn't have to return a particular value.
+
+== Returns
+A menu object representing the newly created item, or nil if the creation failed.</Txt><Txt name="addSubMenu" flag="16" updt="5055827A" id="4FCC7235" addb="footer">= addSubMenu
+Create a new submenu and append it to the menu object.
+== Syntax
+- menu:addSubMenu (position, label)
+- menu:addSubMenu (label)
+
+== Parameters
+- position : the position where to add the new item, optional. It can be negative. If missing or 0, the item will be added at the end.
+- label : the string label of the submenu. you can set an underlined letter by preceding it with a enpersant.
+
+== Returns 
+A menu object representing the newly created submenu, or nil if the creation failed.
+</Txt><Txt name="createPopupMenu" flag="16" updt="4FDC69F8" id="4FDC6998" addb="footer">= createPopupMenu
+Create a new popup menu and return the generated handle.
+
+== Syntax
+menuhandle.createPopupMenu ()
+
+== Parameters
+No parameters
+
+== Returns
+An handle representing the newly created popup menu is returned.
+</Txt><Txt name="free" flag="16" updt="4FDC6CB1" id="4FDC6B3A" addb="footer">= free
+Free the ressources associated with a popup menu created by the %%4FDC6998.Link%% function.
+
+== Syntax
+menuhandle:free ()
+
+== Parameters
+No parameters
+
+== Returns
+No return value
+
+== Remark
+A popup menu is automatically garbage collected when no longer used. However, it could be better for performances to explicitely free a popup menu whenever you know you will no longer use it.
+
+Once a popup menu is free, it shouldn't be used again, as well as all its child menu items. Doing it may result in a crash.
+</Txt><Txt name="remove" flag="16" updt="50558303" id="4FCC72E0" addb="footer">= remove
+Remove an item from a menu
+
+== Syntax
+- menu:remove (item)
+- menu:remove ()
+
+== Parameters
+- item: the item to remove from this menu object. If omited, this menu object removes itself from its parent, that is, it's equivalent to menu.parent:remove(menu)
+
+== Remark
+IF the removed object represents a menu item and not a submenu, you shouldn't do further operation on it after the removal. If you plan to move an item, you must copy it manually first.
+</Txt><Txt name="show" flag="16" updt="4FE34D4A" id="4FDC69FB" addb="footer">= show
+Show a popup menu created by the %%4FDC6998.Link%% function.
+
+== Syntax
+menuobject:show ()
+
+== Parameters
+No parameters.
+
+== Returns
+No return value.
+</Txt>= Menu object
+A menu object represents a menu, a submenu, a menu item, or the menubar itself. The menubar of 6pad is stored in the window.menubar variable. Window.menubar is the entry point for all menu manipulations.
+
+== Properties
+|| Property name | Type | Access | Description |
+| name | string | read/write | Internal name of the menu item, used to access it directly by indexing |
+| text | string | read/write | Text label of the menu object. You can indicate an underlined letter by preceding it by enpersan. |
+| accelerator | string | read/write | The accelerator of the menu item, as a string like 'Ctrl+F2'. The objects which contains submenus can't have an accelerator. |
+| onAction | function | read/write | Function which is called when the menu item is activated. A menu object which contains submenus don't launch a function, so this property is always nil in this case. |
+| enabled | boolean | read/write | Either or not the menu item is enabled/grayed. |
+| checked | boolean | read/write | Either or not the menu item has a check mark. |
+| radio | boolean | read/write | Either or not the check mark used for the item is a radio or checkbox |
+| parent | %%4FC8F215.Link%% | read only | A reference to the parent that contains this menu item |
+| builtIn | boolean | read only | Either or not the menu item is built-in or created by a script. |
+| \[numeric indexes] | menu object | read only | Access to the nth item of a submenu. You can use negative numbers to count from the end. |
+| \[menu name] | menu object | read only | Access a submenu by using its internal name as defined by its name property. |
+
+The # operator returns the number of items contained in the submenu if it is actually a submenu, or false if it is not.
+
+
+</Txt><Txt name="Choice object" flag="16" updt="4FCC7DF0" id="4FC8F2A5" addb="footer"><Txt name="add" flag="16" updt="5055832B" id="4FCC7E6B" addb="footer">= add
+Add an item to the list.
+
+== Syntax
+- choice:add (label, index)
+- choice:add (table, index)
+
+== Parameters
+- label : the label of the new item to add
+- index : the index where to add the new item, optional. 0 or missing assume the end of the list.
+- table: a lua table containing multiple items to add in turn: If you plan to add hundereds of items, it's more efficient to create a table of items and then call add once, unstead of calling add repeatedly with every single item.
+
+== Returns
+No return value.
+
+</Txt><Txt name="clear" flag="16" updt="4FCC7F9E" id="4FCC7F59" addb="footer">= clear
+Remove all items from the list.
+
+== Syntax
+choice:clear ()
+
+== Parameters
+No parameters.
+
+== Returns
+No return value.
+</Txt><Txt name="close" flag="16" updt="4FCC80CA" id="4FCC80A9" addb="footer">= close
+Close the window.
+
+== Syntax
+choice:close ()
+
+== Parameters
+No parameters
+
+== Returns
+No return value.
+
+
+</Txt><Txt name="find" flag="16" updt="4FCC805E" id="4FCC7FF6" addb="footer">= find
+Search for an item in the list
+
+== Syntax
+choice:find (text, index)
+
+== Parameters
+- text: the text to search for within items
+- index : optional: the index from where to start searching. Default is 1.
+
+== Returns
+Index of the found item and is actual text, or nil if not found
+
+</Txt><Txt name="focus" flag="16" updt="4FCC80C3" id="4FCC8093" addb="footer">= focus
+Focus the window.
+
+== Syntax
+choice:focus ()
+
+== Parameters
+No parameters
+
+== Returns
+No return value.
+
+
+</Txt><Txt name="remove" flag="16" updt="4FCC7FEC" id="4FCC7F9C" addb="footer">= remove
+Remove an item from the list.
+
+== Syntax
+choice:remove (index)
+
+== Parameters 
+- index : the index of the item to remove.
+
+== Returns
+No return value.
+</Txt>= Choice object
+The choice object provide functions to control the proposed options in the list box of a choice dialog created by the %%4FC9418E.Link%% function.
+
+== Properties
+|| Property name | Type | Access | Description |
+| selectedIndex | number | read/write | Index of the currently selected item. If no item is selected, contains 0. |
+| selectedItem | string | read/write | Text of the currently selected item. If no item is selected, contains nil. |
+| \[numeric indexes] | string | read/write | Text of the corresponding item. |
+| closed | boolean | read only | Either or not the choice window is closed. |
+
+The # operator returns the number of items currently contained in the list box.
+</Txt><Txt name="Progress object" flag="16" updt="4FCDB262" id="4FC8F359" addb="footer"><Txt name="open" flag="16" updt="4FCC81E2" id="4FCC81AA" addb="footer">= open
+OPen a new progress dialog and immediately show it to the user. 
+
+== Syntax
+progress.open ()
+
+== Parameters
+No parameters.
+
+== Returns 
+A progress handle object which let you manage the progress dialog afterwards. Title and text are set to be empty and value is set to 0.
+</Txt><Txt name="close" flag="16" updt="4FCC81FF" id="4FCC81EC" addb="footer">= close
+Close the window.
+
+== Syntax
+progressobject:close ()
+
+== Parameters
+No parameters
+
+== Returns
+No return value.
+
+
+</Txt>= Progress object
+These functions are aimed to manage progress dialogs. This type of dialog show a progress bar indicating the progress of a lengthy task and allow the user to cancel it by pressing a button.
+
+To use progress dialogs, you must first load the module by using require('progress').
+
+== Properties
+|| Property name | Type | Access | Description |
+| title | string | read/write | Title of the progress dialog |
+| text | string | read/write | Short text displayed under the progress bar to explain what is being doing at the moment, i.e. task status, line/page/file currently processed, volume downloaded/processed so far, download/processing speed, etc. |
+| value | number | read/write | Progress of the task between 0 and 1, where 0 equals 0% and 1 equals 100%. |
+| cancelled | boolean | read only | tell if the user pressed the cancel button. If true, best efforts should be made to quickly abort the task in progress and actually close the dialog with the %%4FCC81EC.Link%% function. The dialog isn't automatically closed when pressing the cancel button. |
+
+</Txt><Txt name="Extensions to lua string API" flag="0" updt="51B4B1B6" id="51B4B00E" addb="footer"><Txt name="string.cfind" flag="0" updt="51B4B1CF" id="51B4B188" addb="footer">	= string.cfind
+Search for the first occurence of a single character in a given string.
+
+== Syntax
+string.cfind (subject, char, offset)
+
+== Parameters
+- subject: where to make the search
+- char: the character to search for, as a single-character string, or as a number threated as an ASCII code.
+- offset. the offset where to start searching
+
+== Returns
+The position of the occurence if found, or nil if not found.
+</Txt><Txt name="string.crfind" flag="0" updt="51B4B1CA" id="51B4B19A" addb="footer">= string.crfind
+Search for the last occurence of a single character in a given string.
+
+== Syntax
+string.crfind (subject, char, offset)
+
+== Parameters
+- subject: where to make the search
+- char: the character to search for, as a single-character string, or as a number threated as an ASCII code.
+- offset. the offset where to start searching
+
+== Returns
+The position of the occurence if found, or nil if not found.
+</Txt><Txt name="string.convert" flag="0" updt="5222DE1A" id="51B4BA3E" addb="footer">= string.convert
+Convert a binary string from a source encoding to a given target encoding.
+
+== Syntax
+string.convert (subject, fromEncoding, toEncoding)
+string.convert (subject, toEncoding)
+
+== Parameters
+- subject: the binary string to convert
+- fromEncoding: the source encoding which the input string is encoded in, as a charset identifier (number; see %%51B4B998.Link%% for the exact values used)
+- toEncoding: the target encoding in which the string is to be converted to, as a charset identifier (number; see %%51B4B998.Link%% for the exact values used)
+
+== Remark
+If the source encoding isn't given, an attempt to guess the encoding of the input string is performed, as if %%51B4B998.Link%% has been called; i.e. string.convert(str, toEncoding) is in fact equivalent as string.convert(str, string.encoding(str), toEncoding).
+
+
+== Returns
+The converted string is returned.
+</Txt><Txt name="string.encoding" flag="0" updt="51B4BEB0" id="51B4B998" addb="footer">= string.encoding
+Try to guess the encoding of a given binary string
+
+== Syntax
+string.encoding (subject)
+
+== Parameters
+- subject: the string whose encoding is to be guessed
+
+== Returns
+The guessed encoding as a charset identifier (number).
+
+Here are some of the most known charset identifier. See [http://msdn.microsoft.com/en-us/library/windows/desktop/dd317756(v=vs.85).aspx] for a more detailled list of possible values.
+Values 1200, 1201, 1202, 1203 and 65002 are only valid in 6pad itself; they  are non-standard windows charset identifiers.
+
+||Charset identifier|Encoding name|
+|0|System's default encoding; also known as ANSI|
+|1200|Unicode UTF-16|
+|1201|Unicode UTF-16 big endian|
+|1202|Unicode UTF-16 with BOM|
+|1203|Unicode UTF-16 big endian with BOM|
+|65001|Unicode UTF-8|
+|65002|Unicode UTF-8 with BOM|
+
+
+
+
+</Txt><Txt name="string.findFirstNotOf" flag="16" updt="4FCCA32E" id="4FCCA28E" addb="footer">= string.findFirstNotOf
+Search for the first character not being part of one of a defined list of characters in a given string.
+
+== Syntax
+string.findFirstNotOf (subject, chars, offset)
+
+== Parameters
+- subject: where to make the search
+- char: the characters to search for
+- offset. the offset where to start searching
+
+== Returns
+The position of the first place in the string different from the characters given, or nil if not found.
+</Txt><Txt name="string.findFirstOf" flag="16" updt="4FCCA256" id="4FCCA1F1" addb="footer">= string.findFirstOf
+Search for the first occurence of one of a defined list of characters in a given string.
+
+== Syntax
+string.findFirstOf (subject, chars, offset)
+
+== Parameters
+- subject: where to make the search
+- char: the characters to search for
+- offset. the offset where to start searching
+
+== Returns
+The position of the first occurence of one of the characters, or nil if not found.
+</Txt><Txt name="string.findLastNotOf" flag="16" updt="4FCCA324" id="4FCCA2F7" addb="footer">= string.findLastNotOf
+Search for the last character not being part of one of a defined list of characters in a given string.
+
+== Syntax
+string.findLastNotOf (subject, chars, offset)
+
+== Parameters
+- subject: where to make the search
+- char: the characters to search for
+- offset. the offset where to start searching
+
+== Returns
+The position of the last place in the string different from the characters given, or nil if not found.
+</Txt><Txt name="string.findLastOf" flag="16" updt="4FCCA289" id="4FCCA258" addb="footer">= string.findLastOf
+Search for the last occurence of one of a defined list of characters in a given string.
+
+== Syntax
+string.findLastOf (subject, chars, offset)
+
+== Parameters
+- subject: where to make the search
+- char: the characters to search for
+- offset. the offset where to start searching
+
+== Returns
+The position of the last occurence of one of the characters, or nil if not found.
+</Txt>	6pad adds some general purpose string functions on the top of string functions offered by standard lua. All these additionnal functions are on the string table.
+
+Functions related to the more specific %%4FC8F418.Link%% are listed separately.
+</Txt><Txt name="Perl compatible regular expressions API" flag="16" updt="4FCCB573" id="4FC8F418" addb="footer"><Txt name="Pattern options" flag="16" updt="4FCF10B2" id="4FCCA36E" addb="footer">= Pattern options
+Here is a list of the different options available to modify the matching behavior of the functions %%4FCC958D.Link%%, %%4FCC9927.Link%%, %%4FCC9F9E.Link%%, %%4FCC97F6.Link%% and %%4FCC988F.Link%%.
+
+|| Option | Name | Description |
+| i | Case insensitive | Perform a case insensitive matching |
+| m | Multiline | With this option, ^ match every line beginning and $ every line ending; without this option ^ and $ only match at the very beginning and end of the subject |
+| s | Dot all | With this option, the metacharacter '.' can match linefeeds and cariage returns. Without this option, it does not. |
+| x | Extended | Allow spaces and comments in the expression |
+| X | Extra | Activate extra uncompatible perl extensions |
+| U | Ungreedy | Invert the default greedyness |
+| A | Anchored | Only match the entire string, as if the expression was between ^and $ |
+| D | Dollar end only | Do not match $ if there is a final cariage return or linefeed. Match only a $ if it's the very end of the subject string. |
+| n | Allow duplicate names | Allow duplicate subpattern names in the expression. Without this option, having twice the same subpattern name raises an error. |
+| E | Not empty | Empty string isn't considered as being a valid match |
+|  F | First line | Fail if no match is found in the first line of the subject string |
+| B | Not BOL | The beginning of the subject string is not the beginning of a line |
+| Z | Not EOL | The end of the subject string is not the end of a line |
+| N | No capture | Disable capturing subpatterns; may increase speed. |
+| O | Optimize |  Do further analyze on the pattern to improve matching speed. |
+| o | Numeric offsets | An empty capturing subpattern returns the offset of the match within the subject string unstead of an empty string. This enables the compability with lua's empty parenthesis translated as numberic offsets.  |
+| T | Table | Always return a lua table as match results, even if named subpatterns are not used. Normally, match results are returned as tables only if there are named subpatterns in the expression. |
+</Txt><Txt name="string.pfind" flag="16" updt="4FCC988B" id="4FCC958D" addb="footer">= string.pfind
+Use the same general rules as string.find to look for a match of the specified PCRE against a subject string. Returns the position of the first match if found, otherwise nil.
+
+== Syntax
+string.pfind (subject, pattern, options, offset)
+
+== Parameters
+- subject: the string where to look for a match
+- pattern: the PCRE pattern to use
+- options: PCRE options to change the behavior of the search, as a string of options letters
+- offset: the starting offset where to start searching
+
+== Returns
+- If no match is found, nil is returned
+- IF a match is found, the positions of the starting and ending points of the match is returned as two number indices.
+</Txt><Txt name="string.pgmatch" flag="16" updt="4FCC9EEB" id="4FCC9927" addb="footer">= string.pgmatch
+Use the same general rules as string.gmatch to look for matches of the specified PCRE against a subject string. Returns an iterator that returns each match result in order.
+
+== Syntax
+string.pgmatch (subject, pattern, options, offset)
+
+== Parameters
+- subject: the string where to look for a match
+- pattern: the PCRE pattern to use
+- options: PCRE options to change the behavior of the search, as a string of options letters
+- offset: the starting offset where to start searching
+
+== Returns
+Return an iterator that can be used to go through all matches of the given string. Each call of the iterator returns a match result in the same banner as %%4FCC97F6.Link%%.
+</Txt><Txt name="string.pgsub" flag="16" updt="4FCCA0C2" id="4FCC9F9E" addb="footer">= string.pgsub
+Use the same general rules as string.gsub to make a global substitution using a PCRE. Returns the result of the substitution, and the number of occurences replaced as a second return value.
+
+== Syntax
+string.pgsub (subject, pattern, replacement, options)
+
+== Parameters
+- subject: the string where to make the substitutions
+- pattern: the PCRE pattern to use
+- replacement: what to use as a replacement. It is traditionnaly a string with back references noted $1, $2, ... $9, but it can also be a function or a table, in which case the same behavior as string.gsub is applied.
+- options: PCRE options to change the behavior of the search, as a string of options letters
+
+
+== Returns
+Returns the result of the substitution, and the number of occurences replaced as a second return value.
+</Txt><Txt name="string.pmatch" flag="16" updt="5055852C" id="4FCC97F6" addb="footer">= string.pmatch
+Use the same general rules as string.match to look for a match of the specified PCRE against a subject string. Returns the first match result if found, otherwise nil.
+
+== Syntax
+string.pmatch (subject, pattern, options, offset)
+
+== Parameters
+- subject: the string where to look for a match
+- pattern: the PCRE pattern to use
+- options: PCRE options to change the behavior of the search, as a string of options letters
+- offset: the starting offset where to start searching
+
+== Returns
+- If no match is found, nil is returned
+- If the regular expression doesn't have any capture parenthesis, the hole matching string is returned.
+- If the regular expression has capture subpatterns, then the hole match is returned, followed by each matched part.
+- If the regular expression has named subpatterns, or if the option T is specified, a table containing the match result is returned unstead of multiple return values. The returned table can be indexed numerically even if named subpatterns are used. 0th element is the hole match, 1st contains the first capture, etc.
+
+
+</Txt><Txt name="string.prfind" flag="16" updt="4FCC98D3" id="4FCC988F" addb="footer">= string.prfind
+Use the same general rules as string.find to look for a match of the specified PCRE against a subject string, except that is looks for the last match and not the first one. Returns the position of the last match if found, otherwise nil.
+
+== Syntax
+string.prfind (subject, pattern, options, offset)
+
+== Parameters
+- subject: the string where to look for a match
+- pattern: the PCRE pattern to use
+- options: PCRE options to change the behavior of the search, as a string of options letters
+- offset: the starting offset where to start searching
+
+== Returns
+- If no match is found, nil is returned
+- IF a match is found, the positions of the starting and ending points of the match is returned as two number indices.
+</Txt>This module adds functions to the string table to be able to use perl compatible regular expressions, which have advantages over lua regular expressions in many cases.
+
+The functions added by this module follow general rules of lua standard library. All PCRE-specific functions begin with a 'p' in their names, but are otherwise identical in the names, behavior, and provide allmost the same features as those using lua regular expressions.
+
+Using PCRE unstead of lua regular expressions is often a matter of individual choice. They are well known, more powerful and cover many advanced features that more simpler lua regular expressions can't. However, lua regular expressions are much faster and could preferably be used if the power of PCRE isn't required.
+</Txt><Txt name="Files and directories API" flag="16" updt="4FCCB599" id="4FC8F374" addb="footer"><Txt name="os.appdir" flag="16" updt="4FCC91E7" id="4FCC91C9" addb="footer">= os.appdir
+Returns the directory where 6pad is located.
+
+== Syntax
+os.appdir ()
+
+== Parameters
+No parameters.
+
+== REturns
+The directory where 6pad is located.
+</Txt><Txt name="os.chdir" flag="16" updt="5055853A" id="4FCC9125" addb="footer">= os.chdir
+Returns or set the current directory which is the base for all relative pathnames.
+
+When called without any parameter, the current directory is returned. When calling with a parameter, the current directory is set to the path specified.
+
+== Syntax
+- os.chdir ()
+- os.chdir (path)
+
+== Parameters
+- path: the path to set the curent directory to
+
+== Returns
+The current directory if called without any argument, or nil if the current directory has just been set.
+</Txt><Txt name="os.copy" flag="16" updt="4FCC8F1D" id="4FCC8E27" addb="footer">= os.copy
+Copy a file.
+
+== Syntax
+os.copy (original, new, failIfExists)
+
+== Parameters
+- original: the name of the existing file to copy
+- new: the name of the copy to make
+- failIfExists: if this parameter is true and if the destination already exists, the function fails. By default, if the destination already exists, it is overwritten by the fresh copy. This parameter is optional and is false if unspecified.
+
+== Returns
+True if the operation was successful, false or nil otherwise.
+</Txt><Txt name="os.delete" flag="16" updt="5055858B" id="4FCC8FFF" addb="footer">= os.delete
+Delete the specified file.
+
+== Syntax
+os.delete (filename)
+
+== Parameters
+- filename: the file name to delete.
+
+== Returns
+True if the operation was sucessful, false otherwise
+
+== Remark
+Be careful when using this function: the specified file is definitely deleted, it isn't placed in the recycle bind.
+</Txt><Txt name="os.fileatime" flag="16" updt="4FCC8D52" id="4FCC8D28" addb="footer">= os.fileatime
+Returns the last access time of the file specified.
+
+== Syntax
+os.fileatime (filename)
+
+== Parameters
+- filename: the filename whose time is to be retrived
+
+== Returns
+the time of the file specified.</Txt><Txt name="os.filectime" flag="16" updt="4FCC8D40" id="4FCC8D25" addb="footer">= os.filectime
+Returns the creation time of the file specified.
+
+== Syntax
+os.filectime (filename)
+
+== Parameters
+- filename: the filename whose time is to be retrived
+
+== Returns
+the time of the file specified.</Txt><Txt name="os.filemtime" flag="16" updt="4FCC8D1D" id="4FCC8CCE" addb="footer">= os.filemtime
+Returns the last modification time of the file specified.
+
+== Syntax
+os.filemtime (filename)
+
+== Parameters
+- filename: the filename whose time is to be retrived
+
+== Returns
+the time of the file specified.</Txt><Txt name="os.filesize" flag="16" updt="4FCC8C91" id="4FCC8C42" addb="footer">= os.filesize
+Return the size of the specified file in bytes
+
+== Syntax
+os.filesize (filename)
+
+== Parameters
+- filesize: the file whose size is to be retrieved
+
+== Returns
+The size of the specified file in bytes</Txt><Txt name="os.glob" flag="16" updt="4FCC9361" id="4FCC92AC" addb="footer">= os.glob
+Return an iterator that iterates through the files having specified pattern.
+
+== Syntax
+os.glob (pattern)
+
+== Parameters
+- pattern: the pattern to search for, which can be composed of a path. You can use jokers * and ?.
+
+== Returns
+An iterator going through found files
+
+
+== Example
+For example that loop :
+for file in io.glob('*.lua') do print(file) end
+will print a list of lua files present in the current directory.
+The iterator produce 4 values per loop: file name, is directory, last modified time, file size.
+
+</Txt><Txt name="os.isdir" flag="16" updt="4FCC9298" id="4FCC926E" addb="footer">= os.isdir
+Test if the specified path point to an existing directory.
+
+== Syntax
+os.isdir (path)
+
+== Parameters
+- path: the path to test
+
+== Returns
+If the specified path points to an existing directory, true is returned, otherwise false.
+</Txt><Txt name="os.isfile" flag="16" updt="4FCC929D" id="4FCC922D" addb="footer">= os.isfile
+Test if the specified path point to an existing file.
+
+== Syntax
+os.isfile (path)
+
+== Parameters
+- path: the path to test
+
+== Returns
+If the specified path points to an existing file, true is returned, otherwise false.
+</Txt><Txt name="os.mkdir" flag="16" updt="4FCC90BD" id="4FCC908E" addb="footer">= os.mkdir
+Create a new directory.
+
+== Syntax
+os.mkdir (path)
+
+== Parameters
+- path: the path where to create the new directory
+
+== Returns
+True if the operation was successful, false or nil otherwise
+</Txt><Txt name="os.move" flag="16" updt="50558669" id="4FCC8D83" addb="footer">= os.move
+Move and/or rename a file
+
+== Syntax
+- os.move (old, new)
+- os.rename (old, new)
+
+
+== Parameters
+- old: the current name of the file to rename or move
+- new: the new file name to rename or move to
+
+== Returns
+True if the operation was successful, false or nil otherwise
+</Txt><Txt name="os.realpath" flag="16" updt="4FCC9222" id="4FCC91F8" addb="footer">= os.realpath
+Resolve the relative path given to an absolute path.
+
+== Syntax
+os.realpath (path)
+
+== Parameters
+- path: the path to resolve
+
+== REturns
+The resolved path.
+</Txt><Txt name="os.rename" flag="16" updt="50558671" id="4FCC8E05" addb="footer">= os.rename
+Move and/or rename a file
+
+== Syntax
+- os.move (old, new)
+- os.rename (old, new)
+
+
+== Parameters
+- old: the current name of the file to rename or move
+- new: the new file name to rename or move to
+
+== Returns
+True if the operation was successful, false or nil otherwise
+</Txt><Txt name="os.rmdir" flag="16" updt="4FCC910D" id="4FCC90BD" addb="footer">= os.rmdir
+Delete an empty directory.
+
+== Syntax
+os.rmdir (path)
+
+== Parameters
+- path: the path where to delete the directory
+
+== Returns
+True if the operation was successful, false or nil otherwise
+
+== Remark
+The directory specified must be empty before being able to delete it.
+</Txt><Txt name="os.symlink" flag="16" updt="4FCDB327" id="4FCC8F20" addb="footer">= os.symlink
+Create a symbolic link named linkfile pointing to target. Symbolic links are supported since windows vista. On windows 2000 and XP, this function always fails.
+
+== Syntax
+os.symlink (target, linkFile)
+
+== Parameters
+- target: the file name where the symbolic link being created points to
+- linkFile: the file name of the symbolic link to create
+
+== Returns
+True if the operation was successful, false or nil otherwise
+
+== Remark
+As as special case, you can call this function without any parameters to check if symbolic links are supported. IN that case, true is returned if symbolic links are actually supported, and false otherwise.
+
+</Txt>= Files and directories API
+This API provides general file and directory manipulation that standard lua doesn't.
+
+This API must be loaded with a call to require('filedir') before being available</Txt><Txt name="Process Advanced API" flag="16" updt="4FCC897A" id="4FC8F39B" addb="footer"><Txt name="close" flag="16" updt="4FCC8A82" id="4FCC8A45" addb="footer">= close
+WAit for the process to terminate, close it and return its error code.
+
+== Syntax
+proc:close ()
+
+== Parameters
+No parameters
+
+== REturns
+The error code returned by the process
+</Txt><Txt name="destroy" flag="16" updt="4FCC8AC2" id="4FCC8A85" addb="footer">= destroy
+Immediately terminate the process without waiting for its completion and return its error code.
+
+== Syntax
+proc:destroy ()
+
+== Parameters
+- No parameters
+
+== Returns
+No return value</Txt><Txt name="flush" flag="16" updt="4FCC8BBC" id="4FCC8B73" addb="footer">= flush
+Flush the standard input buffer of the process.
+
+Use of this function is identical as file:flush of standard lua.
+</Txt><Txt name="open" flag="16" updt="4FCC8A14" id="4FCC8973" addb="footer">= open
+Open a new process using the given command line and return a process object to be used in subsequent calls.
+
+== Syntax
+process.open (command)
+
+== Parameters
+- command. the command line of the process to be started
+
+== Returns
+A process object to be used in subsequent calls.
+</Txt><Txt name="read" flag="16" updt="4FCC8B2F" id="4FCC8AF2" addb="footer">= read
+Read from the process' standard output.
+
+Use of this function is identical as io.read and file:read of standard lua.</Txt><Txt name="wait" flag="16" updt="505586FA" id="4FCC8A13" addb="footer">= wait
+Wait for the process to terminate.
+
+== Syntax
+proc:wait ()
+
+== Parameters
+No parameters
+
+== Returns
+No return value
+</Txt><Txt name="write" flag="16" updt="4FCC8B5E" id="4FCC8B35" addb="footer">= write
+WRite into the process' standard input.
+
+Use of this function is identical as io.write and file:write of standard lua.</Txt>= Process advanced API
+The process API allow use of bidirectional pipes, while standard io.popen cannot.
+
+This API must be loaded with a call to require('process') before being available
+</Txt>= 6pad scripting documentation
+
+This documentation contains all the relevant information to help you making your own lua scripts and modules for 6pad.
+</Txt><Txt name="6pad scripting exemples" flag="0" updt="4FFFF2D5" id="4FD9AC8C"><Txt name="Hello, world !" flag="0" updt="4FFFCFFA" id="4FD9AC9C" addb="footer">= Hello, world !
+
+== Description
+Our goal for our first script is to show a dialog box saying "Hello, world !" when 6pad is started.
+
+This example will show you :
+- How to set up an extension script in 6pad
+- How to show something to the user using the %%4FC8F5D1.Link%% function
+
+== The script
+Use 6pad or another text editor of your liking to create a simple script file with the following contents. Save it as test.lua, in the same directory as 6pad executable.
+```
+alert('Hello, world !')
+```
+
+== Set up the extension script
+Open 6pad.ini in 6pad or another texte editor of your liking, and add the following line  at the end :
+```
+extension=test
+```
+
+Each extension script must be referenced by a extension=XXX line. "test" is the name of our script. Don't put a ".lua" ending to it; there is no particular ending because an extension can also be a compiled lua script (.lc) or a DLL, and all alternatives are properly tried in this order. If your script would be in a different directory as 6pad executable, for example a subdirectory, the dot is used in place of / or \ to separate path elements.
+</Txt><Txt name="Insert the date on demand" flag="0" updt="50557EAE" id="4FD9ACA9" addb="footer">= Insert the date on demand
+
+== Description
+The goal of this script is to insert the current date at current position when selecting the corresponding menu item or when pressing a defined keyboard shorcut.
+
+This example will show you :
+- How to insert a small text at current edition position in current document
+- How to add an item to an existing menu and how to give it a keyboard shortcut
+
+First we will get a menu instance representing the Tools menu. We will add our "insert current date" item at its end.
+
+The add method of the menu object take a variable number of parameters. Here we take the version having 3 arguments: text label, keyboard shortcut, and function. The first parameter is the text that must appear in the menu, the second is the key combination we want to assign to it, and the last parameter is a function which will be called whenever the item is selected or when the assigned keyboard shortcut is detected.
+
+Our function does a very simple thing: we use the window.edit object to access the edition area. Its insert method does what we want if we give it only one parameter: insert a piece of text at current cursor position in the current document.
+
+== The script
+
+
+```
+-- Set the current locale to default value, so that the format of the date being inserted looks natural for your native language
+-- We have to do it only once. We do it at very beginning of the script file, so that it's immediately executed at loading 
+os.setlocale('')
+
+-- Let's start by defining our insert date function
+function insertDate ()
+local date = os.date() -- get the current date as a string, using default format
+window.edit:insert(date) -- and insert it at current position
+end
+
+
+local tools = window.menubar[4] -- get the tools menu which is the 4th on the menu bar
+tools:add('Insert current date', 'Ctrl+T', insertDate) -- and add it our new item, with shortcut Ctrl+T
+```
+</Txt><Txt name="Sort a serie of lines" flag="0" updt="4FFFCD27" id="4FD9AD55" addb="footer">= Sort a serie of lines
+
+== Description
+The goal of our script is to sort alphabetically a serie of lines selected by the user. If there is no selection, the hole document is processed. Our script will be called when pressing Ctrl+Shift+T. We wont explain here how to add an item to a menu and set its shortcut, as it's already explained in previous examples.
+
+This script will show you :
+- How to manipulate and make complex tasks with current selection.
+
+The task is done in 4 steps :
+# Check if there is a selection. If not, select the entire document.
+# Extract individual lines contained in the current selection into a table.
+# Sort the lines in the table.
+# Replace the current selection with sorted content
+
+== The script
+```
+-- Let's define our processing function
+function sortLines ()
+local e = window.edit -- Store edition area in a local variable for shorter access
+if e.selectionStart==e.selectionEnd then -- check if there is no current selection 
+e:select() -- select the entire area
+end--if
+local lines  = {} -- the table where we will store our lines
+for line in e.selectedText:gmatch('[^\r\n]+') do -- exatract the lines and fill our table
+table.insert(lines, line)
+end--for
+table.sort(lines) -- sort our lines
+local text = table.concat(lines, '\r\n') -- Rebuild the lines from the table
+e.selectedText = text -- and replace current selection with selected contents
+end
+window.menubar[4]:add('Sort alphabetically', 'Ctrl+Shift+T', sortLines) -- Add our function in the tools menu
+```
+</Txt><Txt name="Select a tab to switch to" flag="0" updt="4FFFCD38" id="4FD9AD04" addb="footer">= Select a tab to switch to
+
+== Description
+The goal of this script is to let the user select a tab to switch to ammong currently opened ones. The user can select a tab by its name in a simple dialog box.
+
+This script will show you :
+- How to use the simplest version of the choice dialog box
+- How to iterate through tabs and focus one in particular
+
+This is done in several steps :
+# Build a table containing a list of all tabs identified by their names
+# Show the choice dialog box and let the user make his choice
+# Focus the selected tab if the user actually chose one
+
+== The script
+```
+		-- This is our chooseTab function that does all the job
+function chooseTab ()
+local tablist = {} -- we will store a list of tab names in this table
+for i = 1, #window.tabs do -- iterate through all tabs
+table.insert(tablist, window.tabs[i].name) -- and add the tab name to the list
+end
+local item, index = choice('Select a tab to switch to : ', tablist, 'Switch to tab') -- Show the dialog box and let the user make his choice
+if index then -- the user has actually selected something
+window.tabs[index]:focus() -- focus the selected tab
+end
+end
+addAccelerator(chooseTab, 'Ctrl+W') -- set an accelerator for our feature
+```
+</Txt><Txt name="Automatic changelog" flag="0" updt="4FFFCD4C" id="4FD9AD7D" addb="footer">= Automatic changelog
+
+== Description
+The goal of this script is to append a small comment at the end of a file each time it is saved, telling when and by whom it has been modified, so that it makes a sort of very basic history.
+
+This script will show you :
+- How to register a function to be called when a particular event occurs, %%4FCC84D2.Link%% in this case
+- How to modify the text being saved on the fly
+
+Here are the steps :
+# Register a function to be called just before a file is being saved. This is the definition of the %%4FCC84D2.Link%% event.
+# When the function is called, append the current user and the current date to the file's text. It will be saved with the modified contents.
+
+== The script
+```
+-- Set the current locale to default value, so that the format of the date being inserted looks natural for your native language
+-- We have to do it only once. We do it at very beginning of the script file, so that it's immediately executed at loading 
+os.setlocale('')
+
+-- We will set our automatic changelog function so that it is called whenever a file is saved, just before it is done. This is the onBeforeSave event.
+window.onBeforeSave = function (tab) -- we get the current tab as parameter
+local user = os.getenv('USERNAME') -- get the name of the current user
+local date = os.date() -- get the current date as a string formatted according to a default format
+local logline = '\r\nModified by ' .. user .. ' on ' .. date -- Build our log line
+tab.text = tab.text..logline -- append our log line to the end of the file's text
+return true -- return true to let the file being normally saved
+end
+```</Txt><Txt name="Show the length of the selection in the status bar" flag="0" updt="4FFFF3C0" id="4FFFF2E2" addb="footer">= Show the length of the selection in the status bar
+
+== Description
+The goal of this script is to show the number of characters selected additionnally to the selection start and end points, if any, in the status bar.
+
+This script will show you :
+- How to set up a function on a particular event, here %%4FE34B18.Link%%.
+- How to manipulate the status bar to show additionnal information
+
+== The script
+```
+-- SEt our function to be called when the status bar is about to be changed
+window.onStatusBarChange = function ()
+local e = window.edit
+local l = e.selectionEnd-e.selectionStart -- get the length of the selection
+if l~=0 then -- if the selection is not empty
+window.statusbar = window.statusbar .. ', ' .. l ..' characters selected' -- append the number of characters selected to the statusbar
+end
+end
+```</Txt>= 6pad scripting examples
+This section contains some simple examples to get started with lua scripting in 6pad. Except the first one which present the very basic principle, next examples are in no particular order.
+</Txt><Txt name="Footer" flag="32" updt="4FE4951E" id="footer">- Previous : %%*PreviousElement.Link%%
+- Next : %%*NextElement.Link%%
+- Parent : %%*ParentElement.Link%%
+</Txt>6pad scripting documentation</VisuNote>
