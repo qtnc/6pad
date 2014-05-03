@@ -74,6 +74,10 @@ return success;
 
 void handleCustomCommand (void* p) {
 if (!p) return;
+else if  ( ((intptr_t)p) &1) {
+void(*func)(void) = (((char*)p)-1);
+func(); return;
+}
 EnterCriticalSection(&lcs);
 callfunc(l, p, 0, 0);
 LeaveCriticalSection(&lcs);

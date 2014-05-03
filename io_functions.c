@@ -1,11 +1,14 @@
 #include "consts.h"
 #include "global.h"
 
-typedef const char*(*protocolreader)(const wchar_t*, int*, BOOL*);
-typedef BOOL(*protocolwriter)(const wchar_t*, const char*, int) ;
-protocolreader* protocolReaders = 0;
-protocolwriter* protocolWriters = 0;
-int nProtocolReaders=0, nProtocolWriters=0, nMaxProtocolReaders=0, nMaxProtocolWriters=0;
+typedef const char*(*Reader)(const wchar_t*, int*, BOOL*);
+typedef BOOL(*Writer)(const wchar_t*, const char*, int) ;
+typedef struct {
+const char* name;
+union { Reader reader; Writer writer; void* func; };
+} RWEntry;
+RWEntry *readers=0, *writers=0;
+int nReaders=0, nMaxReaders=0, nWriters=0, nMaxWriters=0;
 
 wchar_t* normalizeLineEnding (wchar_t* s, int len, int le, int* optr1, int* optr2) {
 int cle = 0;
@@ -36,26 +39,27 @@ free(s);
 return buf;
 }
 
-void __stdcall __declspec(dllexport) registerProtocolReader (protocolreader x) {
-if (!protocolReaders) protocolReaders = malloc((nMaxProtocolReaders=3) * sizeof(protocolreader)); 
-if (nProtocolReaders>=nMaxProtocolReaders) protocolReaders = realloc(protocolReaders, (nMaxProtocolReaders+=3) * sizeof(protocolreader)); 
-protocolReaders[nProtocolReaders++] = x;
+static inline void RWRegister (RWEntry** rw, int* nrw, int* nMaxRw, const char* name, void* func) {
+if (*nrw>=*nMaxRw) *rw = realloc(*rw, ((*nMaxRw)+=3) * sizeof(RWEntry)); 
+(*rw)[*nrw].func = func;
+(*rw)[(*nrw)++].name = strdup(name);
 }
 
-void __stdcall __declspec(dllexport) registerProtocolWriter (protocolwriter x) {
-if (!protocolWriters) protocolWriters = malloc((nMaxProtocolWriters=3) * sizeof(protocolwriter)); 
-if (nProtocolWriters>=nMaxProtocolWriters) protocolWriters = realloc(protocolWriters, (nMaxProtocolWriters+=3) * sizeof(protocolwriter)); 
-protocolWriters[nProtocolWriters++] = x;
+static inline BOOL RWUnregister (RWEntry** rw, int* nrw, const char* name) {
+for (int i=0; i<*nrw; i++) {
+if (!strcmp((*rw)[i].name, name)) {
+if (*nrw>0) (*rw)[i] = (*rw)[--(*nrw)];
+return TRUE;
+}}
+return FALSE;
 }
 
-const char* readFile (wchar_t* fn, int* nSize, BOOL* rdo) {
-if (wcspos(fn, L"://", 0)>0) {
-for (int i=0; i<nProtocolReaders; i++) {
-const char* re = protocolReaders[i](fn, nSize, rdo);
-if (re) return re;
-}
-return NULL;
-}
+void __declspec(dllexport) RegisterReader (const char* name, Reader func) { RWRegister(&readers, &nReaders, &nMaxReaders, name, func); }
+void __declspec(dllexport) RegisterWriter (const char* name, Writer func) { RWRegister(&writers, &nWriters, &nMaxWriters, name, func); }
+BOOL __declspec(dllexport) UnregisterReader (const char* name) { return RWUnregister(&readers, &nReaders, name); }
+BOOL __declspec(dllexport) UnregisterWriter (const char* name) { return RWUnregister(&writers, &nWriters, name); }
+
+char* __declspec(dllexport) LoadFile (const wchar_t* fn, int* nSize, BOOL* readOnly) {
 HANDLE hFile = CreateFile(fn, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
 if (hFile==INVALID_HANDLE_VALUE) return 0;
 int cap = 4096, pos=0, nRead=0;
@@ -71,13 +75,7 @@ buf[pos]=0;
 return buf;
 }
 
-BOOL writeFile (wchar_t* fn, const char* buf, int len) {
-if (wcspos(fn, L"://", 0)>0) {
-for (int i=0; i<nProtocolWriters; i++) {
-if (protocolWriters[i](fn,buf,len)) return TRUE;
-}
-return FALSE;
-}
+BOOL __declspec(dllexport) SaveFile (const wchar_t* fn, const char* buf, int len) {
 HANDLE hFile = CreateFile(fn, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, 0, NULL);
 if (hFile==INVALID_HANDLE_VALUE) return FALSE;
 int pos=0, nWritten=0;
@@ -86,4 +84,24 @@ CloseHandle(hFile);
 return pos>=len;
 }
 
+const char* readFile (wchar_t* fn, int* nSize, BOOL* rdo) {
+for (int i=0; i<nReaders; i++) {
+const char* re = readers[i].reader(fn, nSize, rdo);
+if (re) return re;
+}
+return NULL;
+}
+
+BOOL writeFile (wchar_t* fn, const char* buf, int len) {
+for (int i=0; i<nWriters; i++) {
+if (writers[i].writer(fn,buf,len)) return TRUE;
+}
+return FALSE;
+}
+
+static void __attribute__((constructor)) RegisterStdRW (void) {
+printf("RegisterReader=%p\r\n", RegisterReader);
+RegisterReader("file", LoadFile);
+RegisterWriter("file", SaveFile);
+}
 

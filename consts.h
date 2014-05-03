@@ -7,7 +7,7 @@
 #include<commctrl.h>
 #include<stdint.h>
 
-#define VERSION_STRING L"1.4.2"
+#define VERSION_STRING L"1.4.3"
 
 #define CP_UTF16 1200
 #define CP_UTF16_LE 1200

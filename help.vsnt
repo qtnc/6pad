@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><VisuNote flag="21" updt="5222DE1A" maxlevel="10" docflag="4" exportpath="" author="QuentinC" updtby="Quentin" default_flag="0" default_addb="footer" bookid="" desc="" lang="" subject="" version=""><Txt name="6pad scripting documentation" flag="21" updt="4FCDB470" id="6padapi"><Txt name="Global functions" flag="16" updt="4FC9C2C0" id="4FC8F14B" addb="footer"><Txt name="Dialog boxes" flag="16" updt="4FCDB068" id="4FCDA42D" addb="footer"><Txt name="alert" flag="16" updt="4FC94054" id="4FC8F5D1" addb="footer">= alert
+<?xml version="1.0" encoding="UTF-8"?><VisuNote flag="21" updt="5364A5AF" maxlevel="10" docflag="4" exportpath="" author="QuentinC" updtby="Quentin" default_flag="0" default_addb="footer" bookid="" desc="" lang="" subject="" version=""><Txt name="6pad scripting documentation" flag="21" updt="4FCDB470" id="6padapi"><Txt name="Global functions" flag="16" updt="4FC9C2C0" id="4FC8F14B" addb="footer"><Txt name="Dialog boxes" flag="16" updt="4FCDB068" id="4FCDA42D" addb="footer"><Txt name="alert" flag="16" updt="4FC94054" id="4FC8F5D1" addb="footer">= alert
 Show a simple message in a dialog box which can be closed by pressing OK.
 
 == Syntax
@@ -1163,7 +1163,7 @@ The position of the last occurence of one of the characters, or nil if not found
 </Txt>	6pad adds some general purpose string functions on the top of string functions offered by standard lua. All these additionnal functions are on the string table.
 
 Functions related to the more specific %%4FC8F418.Link%% are listed separately.
-</Txt><Txt name="Perl compatible regular expressions API" flag="16" updt="4FCCB573" id="4FC8F418" addb="footer"><Txt name="Pattern options" flag="16" updt="4FCF10B2" id="4FCCA36E" addb="footer">= Pattern options
+</Txt><Txt name="Perl compatible regular expressions API" flag="16" updt="4FCCB573" id="4FC8F418" addb="footer"><Txt name="Pattern options" flag="16" updt="5364A5AF" id="4FCCA36E" addb="footer">= Pattern options
 Here is a list of the different options available to modify the matching behavior of the functions %%4FCC958D.Link%%, %%4FCC9927.Link%%, %%4FCC9F9E.Link%%, %%4FCC97F6.Link%% and %%4FCC988F.Link%%.
 
 || Option | Name | Description |
@@ -1172,6 +1172,7 @@ Here is a list of the different options available to modify the matching behavio
 | s | Dot all | With this option, the metacharacter '.' can match linefeeds and cariage returns. Without this option, it does not. |
 | x | Extended | Allow spaces and comments in the expression |
 | X | Extra | Activate extra uncompatible perl extensions |
+| u | Use UTF-8/Unicode extensions. When this option is set, the subject string must be encoded in UTF-8 rather than ANSI. |
 | U | Ungreedy | Invert the default greedyness |
 | A | Anchored | Only match the entire string, as if the expression was between ^and $ |
 | D | Dollar end only | Do not match $ if there is a final cariage return or linefeed. Match only a $ if it's the very end of the subject string. |

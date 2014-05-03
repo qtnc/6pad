@@ -1,13 +1,13 @@
+#include "consts.h"
+#include "list.h"
+#include "pcre-functions.h"
+#include "global.h"
 #include<signal.h>
 #include<stdlib.h>
 #include<stdio.h>
 #include<string.h>
 #include<wchar.h>
 #include<time.h>
-#include "list.h"
-#include "pcre-functions.h"
-#include "consts.h"
-#include "global.h"
 
 LRESULT CALLBACK winproc (HWND,UINT,WPARAM,LPARAM);
 LRESULT CALLBACK editproc (HWND,UINT,WPARAM,LPARAM);

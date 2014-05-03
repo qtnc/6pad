@@ -225,6 +225,7 @@ return 1;
 }
 const char* nm = luaL_checkstring(l,2);
 if (streq(nm, "checked")) {
+if (m->sub) luaL_error(l, "unsupported operation");
 MENUITEMINFO mii;
 mii.cbSize = sizeof(MENUITEMINFO);
 mii.fMask = MIIM_STATE | MIIM_FTYPE;
@@ -233,6 +234,7 @@ lua_pushboolean(l, 0!=(mii.fState&MFS_CHECKED));
 return 1;
 }
 else if (streq(nm, "radio")) {
+if (m->sub) luaL_error(l, "unsupported operation");
 MENUITEMINFO mii;
 mii.cbSize = sizeof(MENUITEMINFO);
 mii.fMask = MIIM_FTYPE;

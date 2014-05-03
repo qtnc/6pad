@@ -492,7 +492,7 @@ C("smartHome", IDM_SMARTHOME, 4)
 C("followIndent", IDM_KEEPINDENT, 8)
 C("showStatusBar", IDM_SHOWSTATUS, 16)
 #undef C
-else if (streq(nm, "edit") || streq(nm, "currentTab") || streq(nm, "menubar") || streq(nm, "hwnd") || streq(nm, "hwndEdit") || streq(nm, "hwndTabCtrl")) luaL_argerror(l, 2, "read only property");
+else if (streq(nm, "edit") || streq(nm, "currentTab") || streq(nm, "menubar") || streq(nm, "hwnd") || streq(nm, "hwndEdit") || streq(nm, "hwndTabCtrl") || streq(nm, "hInstance")) luaL_argerror(l, 2, "read only property");
 else lua_rawset(l,1);
 return 0;
 }
@@ -547,10 +547,13 @@ regt(l, "__len", tabstable__len);
 lua_pushboolean(l,TRUE); lua_setfield(l, -2, "__metatable");
 lua_setmetatable(l, -2);
 lua_setfield(l, -2, "tabs");
+
 lua_pushlightuserdata(l, win);
 lua_setfield(l, -2, "hwnd");
 lua_pushlightuserdata(l, tabctl);
 lua_setfield(l, -2, "hwndTabCtrl");
+lua_pushlightuserdata(l, hinst);
+lua_setfield(l, -2, "hInstance");
 lua_pushstring(l, strPath);
 lua_setfield(l, -2, "basedir");
 lua_newtable(l);

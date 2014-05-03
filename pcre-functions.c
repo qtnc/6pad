@@ -112,8 +112,9 @@ return result;
 }
 
 int doRegexSearch (const wchar_t* string, const wchar_t* pattern, int offset, int flags, int* ptr1, int* ptr2) {
-const char* pat = strcvt(pattern, CP_UTF16, CP_UTF8, NULL);
-const char* str  = strcvt(string, CP_UTF16, CP_UTF8, NULL);
+int encoding = (flags&2? CP_UTF8 : 0);
+const char* pat = strcvt(pattern, CP_UTF16, encoding, NULL);
+const unsigned char* str  = strcvt(string, CP_UTF16, encoding, NULL);
 int options = PCRE_DEFAULT_OPTIONS;
 if (flags&1) options |= PCRE_CASELESS;
 if (flags&2) options |= PCRE_UTF8 | PCRE_NO_UTF8_CHECK;
@@ -126,8 +127,18 @@ int* match = 0;
 int re = preg_match(regex, options, str, offset, 0, &match);
 if (re>=0) {
 re = match[0];
-if (ptr1) *ptr1 = match[0];
-if (ptr2) *ptr2 = match[1];
+int re0 = match[0], re1 = match[1];
+if (encoding==CP_UTF8) {
+int c0=0, c1=0;
+for (int i=re1 -1; i>=0; i--) {
+if (str[i]>=0x80 && str[i]<0xC0) continue;
+if (i<re0) c0++;
+c1++;
+}
+re0=c0; re1=c1;
+}
+if (ptr1) *ptr1 = re0;
+if (ptr2) *ptr2 = re1;
 }
 free(str); free(pat); pcre_free(regex);
 return re;
