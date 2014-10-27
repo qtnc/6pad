@@ -86,9 +86,11 @@ return pos>=len;
 
 const char* readFile (wchar_t* fn, int* nSize, BOOL* rdo) {
 for (int i=0; i<nReaders; i++) {
-const char* re = readers[i].reader(fn, nSize, rdo);
-if (re) return re;
-}
+char* re = readers[i].reader(fn, nSize, rdo);
+if (re) {
+for (int k=0; k<*nSize; k++) if (re[k]==0) re[k]=32;
+return re;
+}}
 return NULL;
 }
 

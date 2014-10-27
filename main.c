@@ -282,6 +282,7 @@ updatePageName(p, p->curFile);
 updateWindowTitle();
 SetWindowText(edit, p->curText);
 SendMessage(edit, EM_SETSEL, p->curSelStart, p->curSelEnd);
+SendMessage(edit, EM_SCROLLCARET, 0, 0);
 SendMessage(edit, EM_SETREADONLY, p->editReadOnly, 0);
 SendMessage(edit, EM_SETMODIFY, p->modified, 0);
 updateStatusBar();

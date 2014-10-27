@@ -187,3 +187,5 @@ Added: unicode checkbox in S&&R dialog to use the new unicode/UTF-8/UCP options;
 Added: extensions to lua standard string API, with encoding guessing and conversions
 Changed: S&R algorithm and some basic string functions improved; S&R is now much faster than before
 
+Version 1.4.3
+A few bugfixes
